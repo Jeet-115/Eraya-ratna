@@ -18,6 +18,8 @@ import AdminCategories from "./pages/admin/Categories";
 import AdminProducts from "./pages/admin/AdminProducts.jsx";
 import AdminHomepageProducts from "./pages/admin/HomepageProducts.jsx";
 import AdminEvents from "./pages/admin/AdminEvents";
+import ProtectedRoute from "./protection/ProtectedRoute";
+import AdminRoute from "./protection/AdminRoute";
 
 function App() {
   return (
@@ -30,20 +32,65 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductDetails />} />
-          <Route path="orders" element={<OrderHistory />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="address" element={<Address />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="payment" element={<Payment />} />
           <Route path="events" element={<Events />} />
+          <Route
+            path="orders"
+            element={
+              <ProtectedRoute>
+                <OrderHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="address"
+            element={
+              <ProtectedRoute>
+                <Address />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="payment"
+            element={
+              <ProtectedRoute>
+                <Payment />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
           <Route path="users" element={<AdminUsers />} />
           <Route path="/admin/categories" element={<AdminCategories />} />
           <Route path="/admin/products" element={<AdminProducts />} />
-          <Route path="/admin/top-products" element={<AdminHomepageProducts />} />
+          <Route
+            path="/admin/top-products"
+            element={<AdminHomepageProducts />}
+          />
           <Route path="/admin/events" element={<AdminEvents />} />
         </Route>
       </Routes>
