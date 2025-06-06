@@ -4,6 +4,7 @@ const AdminLayout = () => {
   const location = useLocation();
 
   const navLinks = [
+    { name: 'Dashboard', path: '/admin/admindashboard' },
     { name: 'Users', path: '/admin/users' },
     { name: 'Categories', path: '/admin/categories' },
     { name: 'Products', path: '/admin/products' },
