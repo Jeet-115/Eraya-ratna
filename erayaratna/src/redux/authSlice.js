@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
-  token: sessionStorage.getItem('token') || null,
+  token: null, // ✅ No need to initialize from sessionStorage
 };
 
 const authSlice = createSlice({
@@ -11,13 +11,11 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
-      sessionStorage.setItem('token', action.payload.token);
+      state.token = null; // ✅ or just skip setting token entirely
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
-      sessionStorage.removeItem('token');
     },
   },
 });

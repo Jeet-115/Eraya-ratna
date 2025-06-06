@@ -8,7 +8,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const dispatch = useDispatch();
@@ -23,7 +23,8 @@ const Register = () => {
     try {
       const res = await registerUser(formData);
       dispatch(setCredentials(res));
-      sessionStorage.setItem("token", res.token);
+      // ❌ Remove this:
+      // sessionStorage.setItem("token", res.token);
       navigate("/");
     } catch (error) {
       alert(error.response?.data?.message || "Registration failed");
@@ -33,7 +34,9 @@ const Register = () => {
   return (
     <section className="w-full min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register at Eraya RATNA</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Register at Eraya RATNA
+        </h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>

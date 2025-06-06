@@ -14,21 +14,23 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await loginUser(formData);
-      dispatch(setCredentials(res));
-      sessionStorage.setItem("token", res.token);
-      navigate(res.user.role === "admin" ? "/admin/dashboard" : "/");
-    } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
-    }
-  };
+  e.preventDefault();
+  try {
+    const res = await loginUser(formData);
+    dispatch(setCredentials({ user: res })); // ✅ pass as object with `user`
+    navigate(res.role === "admin" ? "/admin" : "/");
+  } catch (error) {
+    alert(error.response?.data?.message || "Login failed");
+  }
+};
+
 
   return (
     <section className="w-full min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login to Eraya RATNA</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Login to Eraya RATNA
+        </h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
