@@ -18,7 +18,7 @@ const Login = () => {
   try {
     const res = await loginUser(formData);
     dispatch(setCredentials({ user: res })); // ✅ pass as object with `user`
-    navigate(res.role === "admin" ? "/admin" : "/");
+    navigate(res.role === "admin" ? "/admin/admindashboard" : "/");
   } catch (error) {
     alert(error.response?.data?.message || "Login failed");
   }
