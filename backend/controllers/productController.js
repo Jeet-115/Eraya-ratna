@@ -4,9 +4,10 @@ import Product from "../models/Product.js";
 export const createProduct = async (req, res) => {
   try {
     const imageUrls = req.files?.map((file) => file.path) || [];
-
+    const parsedTags = req.body.tags ? JSON.parse(req.body.tags) : [];
     const product = await Product.create({
       ...req.body,
+      tags: parsedTags,
       images: imageUrls,
       createdBy: req.user._id,
     });
@@ -62,6 +63,10 @@ export const updateProduct = async (req, res) => {
       product.isActive = req.body.isActive;
     }
 
+    if (req.body.tags) {
+      req.body.tags = JSON.parse(req.body.tags);
+    }
+    
     Object.assign(product, req.body);
     await product.save();
 
@@ -85,7 +90,6 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // Get featured products
 export const getFeaturedProducts = async (req, res) => {
