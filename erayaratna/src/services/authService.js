@@ -9,3 +9,8 @@ export const loginUser = async (userData) => {
   const response = await axiosInstance.post('/api/auth/login', userData);
   return response.data;
 };
+
+export const getProfile = async () => {
+  const response = await axiosInstance.get('/api/auth/profile');
+  return response.data;
+};

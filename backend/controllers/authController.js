@@ -68,3 +68,16 @@ export const logout = (req, res) => {
   res.clearCookie('token');
   res.status(200).json({ message: 'Logged out successfully' });
 };
+
+export const getProfile = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: 'Not logged in' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId).select('-password');
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(401).json({ message: 'Token invalid or expired' });
+  }
+};

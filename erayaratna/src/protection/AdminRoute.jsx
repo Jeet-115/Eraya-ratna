@@ -1,13 +1,12 @@
-// src/protection/AdminRoute.jsx
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 function AdminRoute({ children }) {
   const { user } = useSelector((state) => state.auth);
 
-  if (!user) return null; // Wait for auth state to load
+  if (user === null) return null; // Wait for profile fetch to finish
 
-  return user.role === "admin" ? children : <Navigate to="/" replace />;
+  return user && user.role === "admin" ? children : <Navigate to="/" replace />;
 }
 
 export default AdminRoute;

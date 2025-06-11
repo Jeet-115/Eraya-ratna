@@ -3,13 +3,9 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
-  const { token } = useSelector((state) => state.auth);
-
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+  const { user } = useSelector((state) => state.auth);
+  if (user === null) return null; // wait for profile fetch
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 export default ProtectedRoute;
