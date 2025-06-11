@@ -32,6 +32,7 @@ import {
   updateProduct,
   deleteProduct,
   bulkSoftDeleteProducts,
+  updateFeaturedProducts
 } from '../controllers/productController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { adminOnly } from '../middlewares/adminMiddleware.js';
@@ -68,5 +69,6 @@ router.post('/products', upload.array('images', 5), createProduct);
 router.put('/products/:id', upload.array('images', 5), updateProduct);
 router.delete('/products/:id', deleteProduct);
 router.put('/products/bulk-delete', bulkSoftDeleteProducts);
+router.put('/products/featured/update', updateFeaturedProducts);
 
 export default router;

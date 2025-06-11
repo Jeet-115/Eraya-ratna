@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import mongoose from "mongoose";
 
 // Create product with image uploads
 export const createProduct = async (req, res) => {
@@ -22,7 +23,9 @@ export const createProduct = async (req, res) => {
 export const getProducts = async (req, res) => {
   const { category, tag } = req.query;
   let filter = { isDeleted: false, isActive: true };
-  if (category) filter.category = category;
+  if (category && mongoose.Types.ObjectId.isValid(category)) {
+    filter.category = new mongoose.Types.ObjectId(category);
+  }
   if (tag) filter.tags = tag;
 
   try {
@@ -117,5 +120,29 @@ export const bulkSoftDeleteProducts = async (req, res) => {
     res
       .status(500)
       .json({ message: "Bulk delete error", error: error.message });
+  }
+};
+
+export const updateFeaturedProducts = async (req, res) => {
+  const { categoryId, productIds } = req.body;
+
+  if (!categoryId || !productIds) {
+    return res.status(400).json({ message: "Invalid data." });
+  }
+
+  try {
+    // First reset all products in this category:
+    await Product.updateMany({ category: categoryId }, { isFeaturedOnHome: false });
+
+    // Then set isFeaturedOnHome = true for selected products:
+    await Product.updateMany(
+      { _id: { $in: productIds } },
+      { isFeaturedOnHome: true }
+    );
+
+    res.json({ message: "Featured products updated successfully." });
+  } catch (error) {
+    console.error("Error updating featured products:", error);
+    res.status(500).json({ message: "Server error updating featured products." });
   }
 };

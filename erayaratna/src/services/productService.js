@@ -2,8 +2,9 @@
 import axiosInstance from '../utils/axiosInstance';
 
 // Get all products (admin context)
-export const getAllProducts = async () => {
-  const res = await axiosInstance.get('/api/products');
+export const getAllProducts = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const res = await axiosInstance.get(`/api/products${query ? `?${query}` : ''}`);
   return res.data;
 };
 
@@ -36,5 +37,10 @@ export const deleteProduct = async (id) => {
 // Bulk soft delete (optional)
 export const bulkDeleteProducts = async (ids) => {
   const res = await axiosInstance.put('/api/admin/products/bulk-delete', { ids });
+  return res.data;
+};
+
+export const updateFeaturedProducts = async (data) => {
+  const res = await axiosInstance.put("/api/admin/products/featured/update", data);
   return res.data;
 };
