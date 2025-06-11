@@ -1,7 +1,12 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/authSlice';
+import Cookies from 'js-cookie';
 
 const AdminLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navLinks = [
     { name: 'Dashboard', path: '/admin/admindashboard' },
@@ -11,6 +16,12 @@ const AdminLayout = () => {
     { name: 'Top Products', path: '/admin/top-products' },
     { name: 'Events', path: '/admin/events' },
   ];
+
+  const handleLogout = () => {
+    Cookies.remove('token'); // delete token cookie
+    dispatch(logout()); // reset redux state
+    navigate('/login'); // go to login page
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -29,6 +40,13 @@ const AdminLayout = () => {
               {link.name}
             </Link>
           ))}
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="block w-full text-left px-3 py-2 rounded hover:bg-gray-700"
+          >
+            Logout
+          </button>
         </nav>
       </aside>
 
