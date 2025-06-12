@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from 'react-hot-toast';
-
+import { motion } from "framer-motion";
 import {
   getAllCategories,
   addCategory,
@@ -10,7 +10,15 @@ import {
 } from "../../services/categoryService";
 import { FiTrash2 } from "react-icons/fi";
 import { FaRegEdit } from "react-icons/fa";
-import { MdToggleOn, MdToggleOff } from "react-icons/md";
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (custom) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: custom * 0.15 },
+  }),
+};
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -95,11 +103,25 @@ const Categories = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Category Management</h1>
+    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+      <motion.h1
+        className="text-3xl font-bold text-gray-800"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        Category Management
+      </motion.h1>
 
-      <form onSubmit={handleAddCategory} className="mb-8 bg-white p-4 rounded shadow max-w-md">
-        <h2 className="text-lg font-semibold mb-4">Add New Category</h2>
+      {/* Add Category Form */}
+      <motion.form
+        onSubmit={handleAddCategory}
+        className="bg-white p-6 rounded-xl shadow-md max-w-md space-y-4 border border-gray-100"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        custom={0}
+      >
+        <h2 className="text-xl font-semibold text-gray-700">Add New Category</h2>
         <input
           type="text"
           placeholder="Category Name"
@@ -107,35 +129,52 @@ const Categories = () => {
           value={newCategory.name}
           onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+          className="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 outline-none"
         />
         <textarea
           placeholder="Category Description (optional)"
           name="description"
           value={newCategory.description}
           onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+          className="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 outline-none"
         />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full"
+        >
           Add Category
         </button>
-      </form>
+      </motion.form>
 
-      <div className="bg-white p-4 rounded shadow overflow-x-auto max-w-4xl">
-        <table className="min-w-full table-auto border-collapse">
+      {/* Category Table */}
+      <motion.div
+        className="bg-white p-4 rounded-xl shadow-md overflow-x-auto max-w-5xl border border-gray-100"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        custom={1}
+      >
+        <table className="min-w-full table-auto text-sm text-gray-700">
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="px-4 py-2 border-b">Name</th>
               <th className="px-4 py-2 border-b">Description</th>
-              <th className="px-4 py-2 border-b">Status</th>
-              <th className="px-4 py-2 border-b">Actions</th>
+              <th className="px-4 py-2 border-b text-center">Status</th>
+              <th className="px-4 py-2 border-b text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {categories.map((cat) => {
+            {categories.map((cat, index) => {
               const isEditing = editingId === cat._id;
               return (
-                <tr key={cat._id} className="hover:bg-gray-50 border-t">
+                <motion.tr
+                  key={cat._id}
+                  className="hover:bg-gray-50 border-t"
+                  variants={fadeIn}
+                  initial="hidden"
+                  animate="visible"
+                  custom={index}
+                >
                   <td className="px-4 py-2">
                     <input
                       name="name"
@@ -143,7 +182,9 @@ const Categories = () => {
                       onChange={handleFormChange}
                       disabled={!isEditing}
                       className={`w-full px-2 py-1 rounded ${
-                        isEditing ? "border border-gray-300 bg-white" : "bg-transparent border-none"
+                        isEditing
+                          ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200 outline-none"
+                          : "bg-transparent border-none"
                       }`}
                     />
                   </td>
@@ -154,20 +195,31 @@ const Categories = () => {
                       onChange={handleFormChange}
                       disabled={!isEditing}
                       className={`w-full px-2 py-1 rounded ${
-                        isEditing ? "border border-gray-300 bg-white" : "bg-transparent border-none"
+                        isEditing
+                          ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200 outline-none"
+                          : "bg-transparent border-none"
                       }`}
                     />
                   </td>
-                  <td className="px-4 py-2 text-xl text-center">
-                    <button onClick={() => handleToggleStatus(cat._id)} className="focus:outline-none">
-                      {cat.isActive ? (
-                        <MdToggleOn className="text-green-500" />
-                      ) : (
-                        <MdToggleOff className="text-gray-400" />
-                      )}
+                  {/* Modern Switch Toggle */}
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => handleToggleStatus(cat._id)}
+                      className="relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none transition"
+                    >
+                      <span
+                        className={`${
+                          cat.isActive ? 'bg-green-500' : 'bg-gray-300'
+                        } absolute h-6 w-11 rounded-full transition-colors`}
+                      ></span>
+                      <span
+                        className={`${
+                          cat.isActive ? 'translate-x-6' : 'translate-x-1'
+                        } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+                      ></span>
                     </button>
                   </td>
-                  <td className="px-4 py-2 flex gap-2">
+                  <td className="px-4 py-2 flex justify-center gap-2">
                     {isEditing ? (
                       <>
                         <button onClick={() => saveEdit(cat._id)} className="text-green-600 hover:text-green-800">
@@ -188,12 +240,12 @@ const Categories = () => {
                       </>
                     )}
                   </td>
-                </tr>
+                </motion.tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </motion.div>
     </div>
   );
 };

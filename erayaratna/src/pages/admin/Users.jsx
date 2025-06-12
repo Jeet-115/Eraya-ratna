@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  getAllUsers,
-  deleteUser as deleteUserAPI,
-  updateUser as updateUserAPI,
-} from "../../services/userService";
+import { getAllUsers, deleteUser as deleteUserAPI, updateUser as updateUserAPI } from "../../services/userService";
 import { toast } from "react-hot-toast";
 import { FiTrash2 } from "react-icons/fi";
 import { FaRegEdit } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const [formState, setFormState] = useState({
-    name: "",
-    email: "",
-    role: "user",
-  });
+  const [formState, setFormState] = useState({ name: "", email: "", role: "user" });
   const [loading, setLoading] = useState(true);
 
   const loadUsers = async () => {
@@ -25,11 +18,14 @@ const Users = () => {
       setUsers(data);
     } catch (error) {
       toast.error("Failed to fetch users");
-      console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   const startEdit = (user) => {
     setEditingId(user._id);
@@ -53,14 +49,11 @@ const Users = () => {
         email: formState.email,
         isAdmin: formState.role === "admin",
       });
-
       setUsers((prev) => prev.map((u) => (u._id === id ? updated : u)));
-
       toast.success("User updated");
       cancelEdit();
     } catch (error) {
       toast.error("Failed to update user");
-      console.error(error);
     }
   };
 
@@ -72,48 +65,58 @@ const Users = () => {
       toast.success("User deleted");
     } catch (error) {
       toast.error("Failed to delete user");
-      console.error(error);
     }
   };
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  const skeletonRows = Array(3).fill(0);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
+    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+      <motion.h1 
+        className="text-3xl font-bold text-gray-800"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        User Management
+      </motion.h1>
 
-      <div className="overflow-x-auto bg-white rounded shadow p-4">
-        <table className="min-w-full table-auto border-collapse">
+      <motion.div 
+        className="overflow-x-auto bg-white rounded-xl shadow-md p-4 border border-gray-100"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <table className="min-w-full table-auto text-sm text-gray-700">
           <thead>
             <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-2 border-b">Name</th>
-              <th className="px-4 py-2 border-b">Email</th>
-              <th className="px-4 py-2 border-b">Role</th>
-              <th className="px-4 py-2 border-b text-center">Actions</th>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Email</th>
+              <th className="px-4 py-3">Role</th>
+              <th className="px-4 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="5" className="text-center py-6">
-                  Loading...
-                </td>
-              </tr>
+              skeletonRows.map((_, idx) => (
+                <tr key={idx} className="animate-pulse">
+                  <td className="px-4 py-2"><div className="h-4 bg-gray-200 rounded w-3/4"></div></td>
+                  <td className="px-4 py-2"><div className="h-4 bg-gray-200 rounded w-5/6"></div></td>
+                  <td className="px-4 py-2"><div className="h-4 bg-gray-200 rounded w-1/2"></div></td>
+                  <td className="px-4 py-2 text-center"><div className="h-4 bg-gray-200 rounded w-12 mx-auto"></div></td>
+                </tr>
+              ))
             ) : users.length === 0 ? (
               <tr>
-                <td colSpan="5" className="text-center py-6">
-                  No users found
-                </td>
+                <td colSpan="4" className="text-center py-6 text-gray-500">No users found.</td>
               </tr>
             ) : (
               users.map((u) => {
                 const isEditing = editingId === u._id;
                 return (
-                  <tr
+                  <motion.tr 
                     key={u._id}
-                    className="border-t transition hover:bg-gray-50"
+                    whileHover={{ scale: 1.01 }}
+                    className="border-t hover:bg-gray-50"
                   >
                     <td className="p-3">
                       <input
@@ -121,11 +124,7 @@ const Users = () => {
                         value={isEditing ? formState.name : u.name}
                         onChange={handleChange}
                         disabled={!isEditing}
-                        className={`w-full px-2 py-1 rounded-md ${
-                          isEditing
-                            ? "border border-gray-300 bg-white"
-                            : "border-none bg-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded-md text-sm ${isEditing ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200" : "bg-transparent border-none"}`}
                       />
                     </td>
                     <td className="p-3">
@@ -134,11 +133,7 @@ const Users = () => {
                         value={isEditing ? formState.email : u.email}
                         onChange={handleChange}
                         disabled={!isEditing}
-                        className={`w-full px-2 py-1 rounded-md ${
-                          isEditing
-                            ? "border border-gray-300 bg-white"
-                            : "border-none bg-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded-md text-sm ${isEditing ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200" : "bg-transparent border-none"}`}
                       />
                     </td>
                     <td className="p-3">
@@ -147,11 +142,7 @@ const Users = () => {
                         value={isEditing ? formState.role : u.role}
                         onChange={handleChange}
                         disabled={!isEditing}
-                        className={`w-full px-2 py-1 rounded-md ${
-                          isEditing
-                            ? "border border-gray-300 bg-white cursor-pointer"
-                            : "border-none bg-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded-md text-sm ${isEditing ? "border border-gray-300 bg-white cursor-pointer focus:ring focus:ring-blue-200" : "border-none bg-transparent"}`}
                       >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
@@ -162,13 +153,15 @@ const Users = () => {
                         <>
                           <button
                             onClick={() => saveEdit(u._id)}
-                            className="text-green-600 hover:text-green-800"
+                            className="text-green-600 hover:text-green-800 transition"
+                            title="Save"
                           >
                             💾
                           </button>
                           <button
                             onClick={cancelEdit}
-                            className="text-gray-500 hover:text-gray-800"
+                            className="text-gray-500 hover:text-gray-800 transition"
+                            title="Cancel"
                           >
                             ✖️
                           </button>
@@ -177,26 +170,28 @@ const Users = () => {
                         <>
                           <button
                             onClick={() => startEdit(u)}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="Edit User"
                           >
                             <FaRegEdit size={18} />
                           </button>
                           <button
                             onClick={() => deleteUser(u._id)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-red-600 hover:text-red-800 transition"
+                            title="Delete User"
                           >
-                            <FiTrash2 />
+                            <FiTrash2 size={18} />
                           </button>
                         </>
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })
             )}
           </tbody>
         </table>
-      </div>
+      </motion.div>
     </div>
   );
 };

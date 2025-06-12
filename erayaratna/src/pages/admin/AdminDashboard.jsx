@@ -1,10 +1,19 @@
-// src/pages/admin/AdminDashboard.jsx
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   fetchDashboardSummary,
   fetchRevenueStats,
   fetchTopProducts,
 } from '../../services/adminService';
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (custom) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: custom * 0.2 },
+  }),
+};
 
 const AdminDashboard = () => {
   const [summary, setSummary] = useState(null);
@@ -32,54 +41,93 @@ const AdminDashboard = () => {
     loadDashboard();
   }, []);
 
-  if (loading) return <div className="text-center py-10">Loading dashboard...</div>;
+  if (loading) return <div className="text-center py-10 text-lg font-medium">Loading dashboard...</div>;
 
   return (
-    <div className="p-6 space-y-8">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+      <motion.h1
+        className="text-3xl font-bold text-gray-800"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        Admin Dashboard
+      </motion.h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {summary && Object.entries(summary).map(([key, value]) => (
-          <div key={key} className="bg-white p-4 shadow rounded">
-            <h2 className="text-sm text-gray-500 capitalize">{key}</h2>
-            <p className="text-xl font-semibold">{value}</p>
-          </div>
-        ))}
+        {summary &&
+          Object.entries(summary).map(([key, value], index) => (
+            <motion.div
+              key={key}
+              className="bg-white p-4 shadow-md rounded-xl border border-gray-100 hover:shadow-lg cursor-pointer transition"
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              custom={index}
+            >
+              <h2 className="text-sm text-gray-500 capitalize">{key}</h2>
+              <p className="text-2xl font-bold text-gray-800">{value}</p>
+            </motion.div>
+          ))}
       </div>
 
       {/* Revenue Stats */}
-      <div className="bg-white p-6 shadow rounded space-y-2">
-        <h2 className="text-lg font-bold">Revenue</h2>
-        <p><strong>Total Revenue:</strong> ₹{revenue?.totalRevenue.toFixed(2)}</p>
-        <p><strong>Avg Order Value:</strong> ₹{revenue?.avgOrderValue.toFixed(2)}</p>
+      <motion.div
+        className="bg-white p-6 shadow-md rounded-xl border border-gray-100"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        custom={1}
+      >
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Revenue Overview</h2>
+        <p className="text-gray-600 mb-1"><strong>Total Revenue:</strong> ₹{revenue?.totalRevenue.toFixed(2)}</p>
+        <p className="text-gray-600 mb-3"><strong>Avg Order Value:</strong> ₹{revenue?.avgOrderValue.toFixed(2)}</p>
         <div>
-          <h3 className="font-semibold mb-2">Revenue by Month:</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="font-semibold text-gray-700 mb-2">Revenue by Month:</h3>
+          <ul className="list-disc list-inside space-y-1 text-gray-600">
             {Object.entries(revenue?.revenueByMonth || {}).map(([month, value]) => (
               <li key={month}>{month}: ₹{value.toFixed(2)}</li>
             ))}
           </ul>
         </div>
-      </div>
+      </motion.div>
 
       {/* Top Products */}
-      <div className="bg-white p-6 shadow rounded">
-        <h2 className="text-lg font-bold mb-4">Top Products</h2>
-        <ul className="space-y-2">
+      <motion.div
+        className="bg-white p-6 shadow-md rounded-xl border border-gray-100"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        custom={2}
+      >
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Top Selling Products</h2>
+        <ul className="space-y-4">
           {topProducts.map((product, index) => (
-            <li key={index} className="flex items-center space-x-4">
+            <motion.li
+              key={index}
+              className="flex items-center space-x-4 hover:bg-gray-50 p-2 rounded-lg transition"
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              custom={index}
+            >
               {product.image && (
-                <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-14 h-14 object-cover rounded-md border"
+                />
               )}
               <div>
-                <p className="font-semibold">{product.name}</p>
-                <p className="text-sm text-gray-500">Sold: {product.qtySold} | Price: ₹{product.price}</p>
+                <p className="font-semibold text-gray-800">{product.name}</p>
+                <p className="text-sm text-gray-500">
+                  Sold: {product.qtySold} | Price: ₹{product.price}
+                </p>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ul>
-      </div>
+      </motion.div>
     </div>
   );
 };

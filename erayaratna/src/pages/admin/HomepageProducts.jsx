@@ -50,14 +50,15 @@ const HomepageProducts = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Homepage Top Products</h1>
-      <div className="mb-6">
-        <label className="font-semibold mr-2">Select Category:</label>
+    <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-gray-800">Homepage Top Products</h1>
+
+      <div className="flex items-center gap-4">
+        <label className="font-medium text-lg">Select Category:</label>
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-2"
+          className="border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
         >
           {categories.map((cat) => (
             <option key={cat._id} value={cat._id}>
@@ -67,20 +68,20 @@ const HomepageProducts = () => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {products.map((p) => (
           <div
             key={p._id}
             onClick={() => toggleTopProduct(p._id)}
-            className={`p-4 border rounded cursor-pointer shadow hover:shadow-lg transition ${
+            className={`p-4 rounded-lg shadow-md cursor-pointer transition transform hover:scale-105 border-2 ${
               topProducts.includes(p._id)
                 ? "border-blue-600 bg-blue-50"
-                : "border-gray-200"
+                : "border-gray-200 bg-white"
             }`}
           >
-            <h3 className="font-semibold">{p.name}</h3>
+            <h3 className="font-semibold text-lg text-gray-800 mb-2">{p.name}</h3>
             <p className="text-sm text-gray-500">
-              Click to {topProducts.includes(p._id) ? "remove" : "select"} as homepage product
+              {topProducts.includes(p._id) ? "Selected for Homepage" : "Click to select"}
             </p>
           </div>
         ))}
@@ -88,7 +89,7 @@ const HomepageProducts = () => {
 
       <button
         onClick={saveSelection}
-        className="mt-8 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        className="block bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition disabled:opacity-50 mx-auto mt-8"
         disabled={false}
       >
         Save Selection
