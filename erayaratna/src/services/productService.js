@@ -44,3 +44,13 @@ export const updateFeaturedProducts = async (data) => {
   const res = await axiosInstance.put("/api/admin/products/featured/update", data);
   return res.data;
 };
+
+export const getFeaturedProducts = async () => {
+  const res = await axiosInstance.get('/api/products/featured');
+  return res.data;
+};
+
+export const getProductById = async (id) => {
+  const res = await axiosInstance.get(`/api/products/${id}`);
+  return res.data;
+};

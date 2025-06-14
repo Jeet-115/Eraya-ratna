@@ -55,7 +55,7 @@ const AppContent = () => {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="products" element={<Products />} />
-        <Route path="products/:id" element={<ProductDetails />} />
+        <Route path="product/:id" element={<ProductDetails />} />
         <Route path="events" element={<Events />} />
         <Route
           path="orders"
