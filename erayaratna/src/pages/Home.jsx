@@ -3,11 +3,13 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import Navbar from "../component/Navbar";
 import { getFeaturedProducts } from "../services/productService";
+import { getEventsForHome } from "../services/eventService";
 import LoginPromptModal from "../component/LoginPromptModal";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [events, setEvents] = useState([]);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ const Home = () => {
         const products = await getFeaturedProducts();
         const shuffled = [...products].sort(() => 0.5 - Math.random());
         setFeaturedProducts(shuffled);
+        const eventsData = await getEventsForHome();
+        setEvents(eventsData.slice(0, 4)); // Only latest 4 events
       } catch (error) {
         console.error("Error fetching featured products:", error);
       }
@@ -67,9 +71,12 @@ const Home = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl font-extrabold mb-4 drop-shadow-md">Welcome to Eraya RATNA</h1>
+            <h1 className="text-4xl font-extrabold mb-4 drop-shadow-md">
+              Welcome to Eraya RATNA
+            </h1>
             <p className="text-lg text-gray-700">
-              Discover authentic handcrafted jewelry, uniquely made with love and tradition.
+              Discover authentic handcrafted jewelry, uniquely made with love
+              and tradition.
             </p>
           </div>
         </motion.section>
@@ -83,7 +90,9 @@ const Home = () => {
               </h2>
               <button
                 onClick={() =>
-                  handleProtectedAction(() => (window.location.href = "/products"))
+                  handleProtectedAction(
+                    () => (window.location.href = "/products")
+                  )
                 }
                 className="text-white bg-pink-600 px-5 py-2 rounded-full shadow-md hover:bg-pink-700 transition duration-300 text-sm"
               >
@@ -161,28 +170,49 @@ const Home = () => {
           transition={{ duration: 0.7 }}
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-center text-[#4B2E2E]">
-              Upcoming Events
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#4B2E2E]">
+                Upcoming Events
+              </h2>
+              <button
+                onClick={() => navigate("/events")}
+                className="text-white bg-pink-600 px-4 py-2 rounded-full shadow-md hover:bg-pink-700 transition text-sm"
+              >
+                View All Events
+              </button>
+            </div>
+
             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-              {[1, 2, 3].map((event) => (
-                <motion.div
-                  key={event}
-                  className="min-w-[250px] bg-white p-4 rounded-2xl shadow-md hover:shadow-xl transition flex-shrink-0"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="h-32 bg-gray-200 rounded mb-4"></div>
-                  <h3 className="text-lg font-bold mb-2 text-center text-pink-600">
-                    Event Title
-                  </h3>
-                  <p className="text-sm text-gray-600 text-center">
-                    Date: June 20, 2025
-                  </p>
-                  <p className="text-sm text-gray-600 text-center">
-                    Location: Jaipur, India
-                  </p>
-                </motion.div>
-              ))}
+              {events.length > 0 ? (
+                events.map((event) => (
+                  <motion.div
+                    key={event._id}
+                    className="min-w-[250px] bg-white/80 backdrop-blur-lg p-4 rounded-2xl shadow-md hover:shadow-xl transition flex-shrink-0"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="h-32 bg-gray-200 rounded mb-4 overflow-hidden">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2 text-center text-pink-600">
+                      {event.title}
+                    </h3>
+                    <p className="text-sm text-gray-700 text-center mb-1">
+                      Date: {new Date(event.startTime).toLocaleDateString()}
+                    </p>
+                    <p className="text-sm text-gray-700 text-center">
+                      Location: {event.location}
+                    </p>
+                  </motion.div>
+                ))
+              ) : (
+                <p className="text-center text-gray-600 w-full">
+                  No upcoming events.
+                </p>
+              )}
             </div>
           </div>
         </motion.section>

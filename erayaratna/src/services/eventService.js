@@ -23,3 +23,8 @@ export const deleteEvent = async (id) => {
   const res = await axiosInstance.delete(`/api/admin/events/${id}`);
   return res.data;
 };
+
+export const getEventsForHome = async () => {
+  const res = await axiosInstance.get('/api/events'); // This fetches only active events sorted by startTime
+  return res.data;
+};
