@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import Cookies from 'js-cookie';
+import { logoutUser } from '../services/authService'; // Import the service
 
 const AdminLayout = () => {
   const location = useLocation();
@@ -17,10 +18,15 @@ const AdminLayout = () => {
     { name: 'Events', path: '/admin/events' },
   ];
 
-  const handleLogout = () => {
-    Cookies.remove('token'); // delete token cookie
-    dispatch(logout()); // reset redux state
-    navigate('/login'); // go to login page
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); // Server-side cookie destruction
+      Cookies.remove('token'); // Client-side cookie removal (precaution)
+      dispatch(logout()); // Clear Redux auth state
+      navigate('/login'); // Redirect to login page
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (
