@@ -24,3 +24,8 @@ export const toggleCategoryStatus = async (id) => {
   const res = await axiosInstance.put(`/api/admin/categories/${id}/toggle`);
   return res.data;
 };
+
+export const getCategories = async () => {
+  const res = await axiosInstance.get('/api/categories');
+  return res.data;
+};

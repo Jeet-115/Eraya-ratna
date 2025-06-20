@@ -54,3 +54,9 @@ export const getProductById = async (id) => {
   const res = await axiosInstance.get(`/api/products/${id}`);
   return res.data;
 };
+
+export const getProducts = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const res = await axiosInstance.get(`/api/products${query ? `?${query}` : ''}`);
+  return res.data;
+};
