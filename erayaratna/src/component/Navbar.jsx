@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
@@ -8,14 +8,33 @@ import { FaChevronDown } from "react-icons/fa6";
 import { logoutUser } from "../services/authService";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { getCart } from "../services/cartService";
 
 const Navbar = () => {
+  const [cartCount, setCartCount] = useState(0);
   const [language, setLanguage] = useState("en");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      try {
+        const res = await getCart();
+        setCartCount(
+          res.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
+        );
+      } catch (error) {
+        console.error("Failed to load cart count:", error);
+      }
+    };
+    if (user) {
+      // only if user logged in
+      fetchCartCount();
+    }
+  }, [user]);
 
   const toggleLanguage = () => {
     const newLang = language === "en" ? "hi" : "en";
@@ -118,9 +137,11 @@ const Navbar = () => {
             className="relative cursor-pointer hover:text-[#B05050]"
           >
             <FaShoppingCart className="text-xl" />
-            <span className="absolute -top-2 -right-2 bg-[#FF7F7F] text-white text-xs px-1.5 rounded-full">
-              0
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#FF7F7F] text-white text-xs px-1.5 rounded-full">
+                {cartCount}
+              </span>
+            )}
           </div>
         </div>
 
@@ -229,9 +250,11 @@ const Navbar = () => {
               className="relative cursor-pointer hover:text-[#B05050] mx-auto"
             >
               <FaShoppingCart className="text-xl mx-auto" />
-              <span className="absolute -top-2 right-[45%] bg-[#FF7F7F] text-white text-xs px-1.5 rounded-full">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 right-[45%] bg-[#FF7F7F] text-white text-xs px-1.5 rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </div>
           </motion.div>
         )}

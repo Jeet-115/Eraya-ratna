@@ -1,5 +1,6 @@
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
+import mongoose from 'mongoose';
 
 // Get Cart for a user
 export const getCart = async (req, res) => {
@@ -47,20 +48,28 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// Remove item from Cart
 export const removeFromCart = async (req, res) => {
-  const { productId } = req.params;
+  const { itemId } = req.params;
 
   try {
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
-    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+    const initialLength = cart.items.length;
+
+    // Filter out the item by its _id
+    cart.items = cart.items.filter(item => item._id.toString() !== itemId);
+
+    if (cart.items.length === initialLength) {
+      return res.status(404).json({ message: 'Cart item not found' });
+    }
 
     await cart.save();
+
     res.status(200).json(cart);
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error removing cart item:', error);
+    res.status(500).json({ message: 'Server error while removing cart item' });
   }
 };
 
@@ -77,3 +86,26 @@ export const clearCart = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Update Cart Item Quantity
+export const updateCartItem = async (req, res) => {
+  const { itemId } = req.params;
+  const { quantity } = req.body;
+
+  try {
+    const cart = await Cart.findOne({ user: req.user._id });
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+
+    const item = cart.items.id(itemId); // Mongoose subdocument method
+
+    if (!item) return res.status(404).json({ message: 'Cart item not found' });
+
+    item.quantity = quantity; // Update the quantity
+
+    await cart.save();
+    res.status(200).json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+

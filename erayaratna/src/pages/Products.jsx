@@ -1,11 +1,23 @@
 import { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryService";
 import { getProducts } from "../services/productService";
+import { toast } from "react-hot-toast";
+import { addToCart } from "../services/cartService";
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [products, setProducts] = useState([]);
+
+  const handleAddToCart = async (productId) => {
+    try {
+      await addToCart(productId);
+      toast.success("Added to cart!");
+    } catch (err) {
+      console.error("Add to Cart Error:", err);
+      toast.error("Failed to add to cart.");
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -71,7 +83,10 @@ const Products = () => {
               <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
               <p className="text-pink-600 font-bold mb-3">₹{product.price}</p>
               <div className="flex space-x-2">
-                <button className="flex-1 bg-gray-200 text-gray-800 py-1 rounded hover:bg-gray-300 transition">
+                <button
+                  onClick={() => handleAddToCart(product._id)}
+                  className="flex-1 bg-gray-200 text-gray-800 py-1 rounded hover:bg-gray-300 transition"
+                >
                   Add to Cart
                 </button>
                 <button className="flex-1 bg-pink-600 text-white py-1 rounded hover:bg-pink-700 transition">

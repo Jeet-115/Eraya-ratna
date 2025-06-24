@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-hot-toast';
+import { addToCart } from '../services/cartService'; // ✅ import cart service
 import { getProductById, getAllProducts } from '../services/productService';
 
 const ProductDetails = () => {
-  const { id } = useParams(); // get product ID from URL
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
+  const user = useSelector((state) => state.auth.user); // ✅ to check login
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -13,7 +17,6 @@ const ProductDetails = () => {
         const fetchedProduct = await getProductById(id);
         setProduct(fetchedProduct);
 
-        // Fetch all products to find similar ones by tags:
         const allProducts = await getAllProducts();
         const similar = allProducts.filter(p =>
           p._id !== id && p.tags.some(tag => fetchedProduct.tags.includes(tag))
@@ -26,6 +29,20 @@ const ProductDetails = () => {
 
     fetchProductDetails();
   }, [id]);
+
+  const handleAddToCart = async (productId) => {
+    if (!user) {
+      toast.error("Please login to add to cart");
+      return;
+    }
+    try {
+      await addToCart(productId);
+      toast.success("Product added to cart!");
+    } catch (error) {
+      toast.error("Failed to add to cart");
+      console.error("Add to cart error:", error);
+    }
+  };
 
   if (!product) return <p>Loading product details...</p>;
 
@@ -42,7 +59,10 @@ const ProductDetails = () => {
           <p className="text-gray-700">{product.description}</p>
           <p className="text-2xl text-pink-600 font-bold">₹{product.price}</p>
           <div className="flex gap-4 mt-4">
-            <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300">
+            <button
+              onClick={() => handleAddToCart(product._id)}
+              className="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300"
+            >
               Add to Cart
             </button>
             <button className="bg-pink-600 text-white px-6 py-2 rounded hover:bg-pink-700">
@@ -68,7 +88,10 @@ const ProductDetails = () => {
               <h3 className="text-md font-semibold mb-1">{sp.name}</h3>
               <p className="text-pink-600 font-bold mb-2">₹{sp.price}</p>
               <div className="flex gap-2">
-                <button className="flex-1 text-sm bg-gray-200 text-gray-800 py-1 rounded hover:bg-gray-300">
+                <button
+                  onClick={() => handleAddToCart(sp._id)} // ✅ Similar product add
+                  className="flex-1 text-sm bg-gray-200 text-gray-800 py-1 rounded hover:bg-gray-300"
+                >
                   Cart
                 </button>
                 <button className="flex-1 text-sm bg-pink-600 text-white py-1 rounded hover:bg-pink-700">

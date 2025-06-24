@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import Navbar from "../component/Navbar";
 import { getFeaturedProducts } from "../services/productService";
 import { getEventsForHome } from "../services/eventService";
+import { addToCart } from "../services/cartService";
 import LoginPromptModal from "../component/LoginPromptModal";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -16,6 +18,19 @@ const Home = () => {
 
   const handleCardClick = (productId) => {
     handleProtectedAction(() => navigate(`/product/${productId}`));
+  };
+
+  const handleAddToCart = async (e, productId) => {
+    e.stopPropagation();
+    handleProtectedAction(async () => {
+      try {
+        await addToCart(productId);
+        toast.success("Added to cart!");
+      } catch (err) {
+        console.error("Add to Cart Error:", err);
+        toast.error("Failed to add to cart.");
+      }
+    });
   };
 
   useEffect(() => {
@@ -129,16 +144,12 @@ const Home = () => {
                     </p>
                     <div className="flex justify-between items-center mt-auto">
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleProtectedAction(() =>
-                            console.log("Add to cart logic here")
-                          );
-                        }}
+                        onClick={(e) => handleAddToCart(e, product._id)}
                         className="bg-pink-600 text-white text-xs px-4 py-2 rounded-full hover:bg-pink-700 shadow-md transition"
                       >
                         Add to Cart
                       </button>
+
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

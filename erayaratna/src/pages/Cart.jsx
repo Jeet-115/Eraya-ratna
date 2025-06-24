@@ -12,41 +12,41 @@ const Cart = () => {
 
   // Fetch cart items from backend
   useEffect(() => {
-  const fetchCart = async () => {
-    try {
-      setLoading(true);
-      const res = await getCart();
-      console.log("Fetched cart response:", res); // DEBUG
-      setCartItems(res.cart || []); // adjust 'cart' to match actual key
-    } catch (error) {
-      toast.error("Failed to load cart.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchCart();
-}, []);
+    const fetchCart = async () => {
+      try {
+        setLoading(true);
+        const res = await getCart();
+        console.log("Fetched cart response:", res); // DEBUG
+        setCartItems(res.items || []); // ✅ Correctly set the items array
+      } catch (error) {
+        toast.error("Failed to load cart.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCart();
+  }, []);
 
-
-  const handleQuantityChange = async (itemId, newQuantity) => {
+  const handleQuantityChange = async (cartItemId, newQuantity) => {
     if (newQuantity < 1) return;
 
     try {
-      await updateCartItem(itemId, { quantity: newQuantity });
+      await updateCartItem(cartItemId, { quantity: newQuantity });
       setCartItems((prev) =>
         prev.map((item) =>
-          item._id === itemId ? { ...item, quantity: newQuantity } : item
+          item._id === cartItemId ? { ...item, quantity: newQuantity } : item
         )
       );
+      toast.success("Quantity updated!");
     } catch (error) {
       toast.error("Failed to update quantity.");
     }
   };
 
-  const handleRemove = async (itemId) => {
+  const handleRemove = async (cartItemId) => {
     try {
-      await removeFromCart(itemId);
-      setCartItems((prev) => prev.filter((item) => item._id !== itemId));
+      await removeFromCart(cartItemId);
+      setCartItems((prev) => prev.filter((item) => item._id !== cartItemId));
       toast.success("Item removed from cart!");
     } catch (error) {
       toast.error("Failed to remove item.");
