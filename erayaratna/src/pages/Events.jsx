@@ -1,29 +1,6 @@
-const events = [
-  {
-    id: 1,
-    title: "Handicraft Workshop",
-    description: "Learn traditional techniques with experts.",
-    location: "Delhi Haat",
-    startDate: "2025-06-01",
-    endDate: "2025-06-03",
-  },
-  {
-    id: 2,
-    title: "Summer Art Exhibition",
-    description: "A display of Eraya's best handcrafted pieces.",
-    location: "Mumbai Art Gallery",
-    startDate: "2025-05-26",
-    endDate: "2025-05-28",
-  },
-  {
-    id: 3,
-    title: "Winter Fest Showcase",
-    description: "Join us this December for exclusive collections.",
-    location: "Bangalore Palace",
-    startDate: "2025-12-10",
-    endDate: "2025-12-12",
-  },
-];
+import { useState, useEffect } from "react";
+import { getEventsForHome } from "../services/eventService";
+import { toast } from "react-hot-toast";
 
 const getStatus = (start, end) => {
   const today = new Date();
@@ -36,49 +13,76 @@ const getStatus = (start, end) => {
 };
 
 const Events = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const data = await getEventsForHome(); // API call
+        setEvents(data);
+      } catch (error) {
+        toast.error("Failed to load events.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
     <section className="min-h-screen bg-gray-50 p-6">
       <h2 className="text-3xl font-bold mb-6">All Events</h2>
 
-      <div className="space-y-6">
-        {events.map((event) => {
-          const status = getStatus(event.startDate, event.endDate);
+      {loading ? (
+        <p className="text-center text-gray-500">Loading events...</p>
+      ) : events.length === 0 ? (
+        <p className="text-center text-gray-500">No events found.</p>
+      ) : (
+        <div className="space-y-6">
+          {events.map((event) => {
+            const status = getStatus(event.startTime, event.endTime);
 
-          return (
-            <div
-              key={event.id}
-              className="bg-white p-6 rounded-xl shadow border-l-4"
-              style={{
-                borderColor:
-                  status === "Upcoming"
-                    ? "#3b82f6"
-                    : status === "Ongoing"
-                    ? "#10b981"
-                    : "#9ca3af",
-              }}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-semibold">{event.title}</h3>
-                <span
-                  className={`text-sm px-2 py-1 rounded-full ${
+            return (
+              <div
+                key={event._id}
+                className="bg-white p-6 rounded-xl shadow border-l-4"
+                style={{
+                  borderColor:
                     status === "Upcoming"
-                      ? "bg-blue-100 text-blue-800"
+                      ? "#3b82f6"
                       : status === "Ongoing"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {status}
-                </span>
+                      ? "#10b981"
+                      : "#9ca3af",
+                }}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-semibold">{event.title}</h3>
+                  <span
+                    className={`text-sm px-2 py-1 rounded-full ${
+                      status === "Upcoming"
+                        ? "bg-blue-100 text-blue-800"
+                        : status === "Ongoing"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    {status}
+                  </span>
+                </div>
+                <p className="text-gray-700">{event.description}</p>
+                <div className="text-sm text-gray-500 mt-2">
+                  📍 {event.location} | 🗓️{" "}
+                  {new Date(event.startTime).toLocaleDateString()} -{" "}
+                  {new Date(event.endTime).toLocaleDateString()}
+                </div>
               </div>
-              <p className="text-gray-700">{event.description}</p>
-              <div className="text-sm text-gray-500 mt-2">
-                📍 {event.location} | 🗓️ {event.startDate} - {event.endDate}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };
