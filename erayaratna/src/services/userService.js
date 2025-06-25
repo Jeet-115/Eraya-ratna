@@ -14,3 +14,8 @@ export const updateUser = async (userId, payload) => {
   const res = await axiosInstance.put(`/api/admin/users/${userId}`, payload);
   return res.data;
 };
+
+export const updateUserProfile = async (data) => {
+  const res = await axiosInstance.put('/api/user/update-profile', data);
+  return res.data;
+};
