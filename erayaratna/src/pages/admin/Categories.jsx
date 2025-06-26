@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import { motion } from "framer-motion";
 import {
@@ -21,6 +22,7 @@ const fadeIn = {
 };
 
 const Categories = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
   const [editingId, setEditingId] = useState(null);
@@ -103,44 +105,46 @@ const Categories = () => {
   };
 
   return (
-    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
-      <motion.h1
-        className="text-3xl font-bold text-gray-800"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        Category Management
-      </motion.h1>
+    <div className="p-6 min-h-screen bg-gradient-to-tr from-[#FFF3E0] via-[#FFE0EC] to-[#FAF3DD] text-[#4B2E2E]">
+      <div className="flex justify-between items-center mb-8">
+        <motion.h1
+          className="text-4xl font-extrabold tracking-wide text-[#BF5F82]"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          🌼 Admin Category Management
+        </motion.h1>
+      </div>
 
       {/* Add Category Form */}
       <motion.form
         onSubmit={handleAddCategory}
-        className="bg-white p-6 rounded-xl shadow-md max-w-md space-y-4 border border-gray-100"
+        className="bg-white/90 p-6 rounded-2xl shadow max-w-xl border border-rose-100 space-y-4"
         variants={fadeIn}
         initial="hidden"
         animate="visible"
         custom={0}
       >
-        <h2 className="text-xl font-semibold text-gray-700">Add New Category</h2>
+        <h2 className="text-xl font-semibold text-rose-600">➕ Add New Category</h2>
         <input
           type="text"
-          placeholder="Category Name"
           name="name"
+          placeholder="Category Name"
           value={newCategory.name}
           onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 outline-none"
+          className="w-full border border-rose-200 rounded px-3 py-2 focus:ring-2 focus:ring-rose-300 outline-none"
         />
         <textarea
-          placeholder="Category Description (optional)"
           name="description"
+          placeholder="Description (optional)"
           value={newCategory.description}
           onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 outline-none"
+          className="w-full border border-rose-200 rounded px-3 py-2 focus:ring-2 focus:ring-rose-300 outline-none"
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full"
+          className="bg-rose-500 text-white w-full py-2 rounded hover:bg-rose-600 transition"
         >
           Add Category
         </button>
@@ -148,15 +152,16 @@ const Categories = () => {
 
       {/* Category Table */}
       <motion.div
-        className="bg-white p-4 rounded-xl shadow-md overflow-x-auto max-w-5xl border border-gray-100"
+        className="bg-white/90 mt-10 p-6 rounded-2xl shadow-lg overflow-x-auto max-w-5xl border border-rose-100"
         variants={fadeIn}
         initial="hidden"
         animate="visible"
         custom={1}
       >
-        <table className="min-w-full table-auto text-sm text-gray-700">
-          <thead>
-            <tr className="bg-gray-100 text-left">
+        <h2 className="text-xl font-semibold text-rose-700 mb-4">📂 All Categories</h2>
+        <table className="min-w-full text-sm text-gray-700">
+          <thead className="bg-[#FFF0F6] text-[#5A3E36]">
+            <tr>
               <th className="px-4 py-2 border-b">Name</th>
               <th className="px-4 py-2 border-b">Description</th>
               <th className="px-4 py-2 border-b text-center">Status</th>
@@ -169,7 +174,7 @@ const Categories = () => {
               return (
                 <motion.tr
                   key={cat._id}
-                  className="hover:bg-gray-50 border-t"
+                  className="hover:bg-[#FFF8F9] border-t"
                   variants={fadeIn}
                   initial="hidden"
                   animate="visible"
@@ -183,7 +188,7 @@ const Categories = () => {
                       disabled={!isEditing}
                       className={`w-full px-2 py-1 rounded ${
                         isEditing
-                          ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200 outline-none"
+                          ? "border border-gray-300 bg-white focus:ring-2 focus:ring-pink-200"
                           : "bg-transparent border-none"
                       }`}
                     />
@@ -196,30 +201,29 @@ const Categories = () => {
                       disabled={!isEditing}
                       className={`w-full px-2 py-1 rounded ${
                         isEditing
-                          ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200 outline-none"
+                          ? "border border-gray-300 bg-white focus:ring-2 focus:ring-pink-200"
                           : "bg-transparent border-none"
                       }`}
                     />
                   </td>
-                  {/* Modern Switch Toggle */}
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => handleToggleStatus(cat._id)}
-                      className="relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none transition"
+                      className="relative inline-flex items-center h-6 w-11 rounded-full focus:outline-none transition"
                     >
                       <span
-                        className={`${
-                          cat.isActive ? 'bg-green-500' : 'bg-gray-300'
-                        } absolute h-6 w-11 rounded-full transition-colors`}
+                        className={`absolute h-6 w-11 rounded-full transition-colors ${
+                          cat.isActive ? "bg-green-500" : "bg-gray-300"
+                        }`}
                       ></span>
                       <span
-                        className={`${
-                          cat.isActive ? 'translate-x-6' : 'translate-x-1'
-                        } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+                        className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${
+                          cat.isActive ? "translate-x-6" : "translate-x-1"
+                        }`}
                       ></span>
                     </button>
                   </td>
-                  <td className="px-4 py-2 flex justify-center gap-2">
+                  <td className="px-4 py-2 flex justify-center gap-3">
                     {isEditing ? (
                       <>
                         <button onClick={() => saveEdit(cat._id)} className="text-green-600 hover:text-green-800">

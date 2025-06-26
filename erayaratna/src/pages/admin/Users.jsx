@@ -50,19 +50,19 @@ const Users = () => {
         isAdmin: formState.role === "admin",
       });
       setUsers((prev) => prev.map((u) => (u._id === id ? updated : u)));
-      toast.success("User updated");
+      toast.success("🧘 User info updated");
       cancelEdit();
     } catch (error) {
-      toast.error("Failed to update user");
+      toast.error("❌ Update failed");
     }
   };
 
   const deleteUser = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    if (!window.confirm("Are you sure you want to remove this soul from the system?")) return;
     try {
       await deleteUserAPI(id);
       setUsers((prev) => prev.filter((u) => u._id !== id));
-      toast.success("User deleted");
+      toast.success("🕊️ User removed");
     } catch (error) {
       toast.error("Failed to delete user");
     }
@@ -71,52 +71,54 @@ const Users = () => {
   const skeletonRows = Array(3).fill(0);
 
   return (
-    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
-      <motion.h1 
-        className="text-3xl font-bold text-gray-800"
+    <div className="min-h-screen bg-gradient-to-br from-[#fef6f9] via-[#f4f7fe] to-[#f3fbf4] p-6 text-gray-700">
+      <motion.h1
+        className="text-4xl font-bold text-blue-600 mb-6 tracking-tight flex items-center gap-2"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        User Management
+        🧑‍🤝‍🧑 Admin – User Management
       </motion.h1>
 
-      <motion.div 
-        className="overflow-x-auto bg-white rounded-xl shadow-md p-4 border border-gray-100"
+      <motion.div
+        className="overflow-x-auto bg-white rounded-xl shadow-xl p-6 border border-gray-100"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <table className="min-w-full table-auto text-sm text-gray-700">
+        <table className="min-w-full text-sm text-gray-700">
           <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3 text-center">Actions</th>
+            <tr className="bg-gradient-to-r from-blue-50 to-purple-50 text-left rounded">
+              <th className="px-4 py-3">🧍 Name</th>
+              <th className="px-4 py-3">📧 Email</th>
+              <th className="px-4 py-3">🔑 Role</th>
+              <th className="px-4 py-3 text-center">⚙️ Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               skeletonRows.map((_, idx) => (
                 <tr key={idx} className="animate-pulse">
-                  <td className="px-4 py-2"><div className="h-4 bg-gray-200 rounded w-3/4"></div></td>
-                  <td className="px-4 py-2"><div className="h-4 bg-gray-200 rounded w-5/6"></div></td>
-                  <td className="px-4 py-2"><div className="h-4 bg-gray-200 rounded w-1/2"></div></td>
-                  <td className="px-4 py-2 text-center"><div className="h-4 bg-gray-200 rounded w-12 mx-auto"></div></td>
+                  <td className="px-4 py-3"><div className="h-4 bg-gray-200 rounded w-3/4"></div></td>
+                  <td className="px-4 py-3"><div className="h-4 bg-gray-200 rounded w-5/6"></div></td>
+                  <td className="px-4 py-3"><div className="h-4 bg-gray-200 rounded w-1/2"></div></td>
+                  <td className="px-4 py-3 text-center"><div className="h-4 bg-gray-200 rounded w-12 mx-auto"></div></td>
                 </tr>
               ))
             ) : users.length === 0 ? (
               <tr>
-                <td colSpan="4" className="text-center py-6 text-gray-500">No users found.</td>
+                <td colSpan="4" className="text-center py-6 text-gray-500">No users found on this path.</td>
               </tr>
             ) : (
-              users.map((u) => {
+              users.map((u, index) => {
                 const isEditing = editingId === u._id;
                 return (
-                  <motion.tr 
+                  <motion.tr
                     key={u._id}
-                    whileHover={{ scale: 1.01 }}
-                    className="border-t hover:bg-gray-50"
+                    className="border-t hover:bg-blue-50"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
                   >
                     <td className="p-3">
                       <input
@@ -142,7 +144,7 @@ const Users = () => {
                         value={isEditing ? formState.role : u.role}
                         onChange={handleChange}
                         disabled={!isEditing}
-                        className={`w-full px-3 py-2 rounded-md text-sm ${isEditing ? "border border-gray-300 bg-white cursor-pointer focus:ring focus:ring-blue-200" : "border-none bg-transparent"}`}
+                        className={`w-full px-3 py-2 rounded-md text-sm ${isEditing ? "border border-gray-300 bg-white focus:ring focus:ring-blue-200" : "bg-transparent border-none"}`}
                       >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
