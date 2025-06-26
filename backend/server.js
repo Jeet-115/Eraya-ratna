@@ -40,6 +40,11 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/address', addressRoutes);
 app.use('/api/cart', cartRoutes);
 
+app.get("/health", (req, res) => {
+  console.log("🩺 Health check at:", new Date().toLocaleString());
+  res.status(200).send("OK");
+});
+
 // root route
 app.get('/', (req, res) => {
   res.send('API is running...');
