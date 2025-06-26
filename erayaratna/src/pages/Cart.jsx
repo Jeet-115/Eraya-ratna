@@ -1,23 +1,26 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+import { FaArrowLeft } from "react-icons/fa";
+import Footer from "../component/Footer";
 import {
   getCart,
   updateCartItem,
   removeFromCart,
 } from "../services/cartService";
-import { toast } from "react-hot-toast";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Fetch cart items from backend
   useEffect(() => {
     const fetchCart = async () => {
       try {
         setLoading(true);
         const res = await getCart();
-        console.log("Fetched cart response:", res); // DEBUG
-        setCartItems(res.items || []); // ✅ Correctly set the items array
+        setCartItems(res.items || []);
       } catch (error) {
         toast.error("Failed to load cart.");
       } finally {
@@ -29,7 +32,6 @@ const Cart = () => {
 
   const handleQuantityChange = async (cartItemId, newQuantity) => {
     if (newQuantity < 1) return;
-
     try {
       await updateCartItem(cartItemId, { quantity: newQuantity });
       setCartItems((prev) =>
@@ -59,71 +61,148 @@ const Cart = () => {
       0
     );
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4, ease: "easeOut" },
+    },
+  };
+
   return (
-    <section className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6">Your Cart</h2>
+    <section className="min-h-screen bg-gradient-to-br from-[#FFF5EC] to-[#FFE5E0] px-4 py-10 outfit text-[#4B2E2E]">
+      <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <motion.div
+          onClick={() => navigate("/")}
+          className="mb-6 flex items-center gap-2 text-[#4B2E2E] hover:text-[#8A2C02] hover:underline cursor-pointer transition w-fit"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <FaArrowLeft className="text-lg" />
+          <span className="text-sm font-medium tracking-wide">
+            Back to Home
+          </span>
+        </motion.div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : cartItems.length === 0 ? (
-        <p className="text-gray-600">Your cart is empty.</p>
-      ) : (
-        <div className="space-y-4">
-          {cartItems.map(({ _id, product, quantity }) => (
-            <div
-              key={_id}
-              className="flex items-center bg-white p-4 rounded-xl shadow-sm"
-            >
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="w-20 h-20 object-cover rounded-md"
-              />
-              <div className="ml-4 flex-1">
-                <h3 className="font-semibold text-lg">{product.name}</h3>
-                <p className="text-sm text-gray-600">₹{product.price}</p>
-                <div className="flex items-center mt-2 space-x-2">
-                  <button
-                    onClick={() => handleQuantityChange(_id, quantity - 1)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  >
-                    -
-                  </button>
-                  <span>{quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(_id, quantity + 1)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() => handleRemove(_id)}
-                    className="ml-4 text-red-600 text-sm hover:underline"
-                  >
-                    Remove
-                  </button>
+        <motion.h2
+          className="text-3xl font-bold mb-8 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          🛒 Your Cart
+        </motion.h2>
+
+        {loading ? (
+          <motion.p
+            className="text-center text-gray-600"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            Loading...
+          </motion.p>
+        ) : cartItems.length === 0 ? (
+          <motion.p
+            className="text-center text-gray-600"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            Your cart is empty. 🕊️
+          </motion.p>
+        ) : (
+          <motion.div
+            className="space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {cartItems.map(({ _id, product, quantity }) => (
+              <motion.div
+                key={_id}
+                className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-lg border border-[#FFD59F] p-4 rounded-2xl shadow"
+                variants={itemVariants}
+              >
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  className="w-24 h-24 object-cover rounded-xl"
+                />
+                <div className="flex-1 w-full">
+                  <h3 className="font-semibold text-lg">{product.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    Price: ₹{product.price}
+                  </p>
+                  <div className="flex items-center mt-2 space-x-2">
+                    <button
+                      onClick={() => handleQuantityChange(_id, quantity - 1)}
+                      className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                    >
+                      −
+                    </button>
+                    <span className="min-w-[30px] text-center">{quantity}</span>
+                    <button
+                      onClick={() => handleQuantityChange(_id, quantity + 1)}
+                      className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => handleRemove(_id)}
+                      className="ml-4 text-red-600 text-sm hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right text-pink-600 font-semibold w-24">
-                ₹{product.price * quantity}
-              </div>
-            </div>
-          ))}
+                <div className="text-right text-pink-600 font-semibold w-24 mt-2 md:mt-0">
+                  ₹{product.price * quantity}
+                </div>
+              </motion.div>
+            ))}
 
-          <div className="flex justify-between items-center mt-6 bg-white p-4 rounded-xl shadow-sm">
-            <span className="font-semibold text-lg">Total:</span>
-            <span className="text-pink-600 text-lg font-bold">
-              ₹{getTotal()}
-            </span>
-          </div>
+            {/* Total Section */}
+            <motion.div
+              className="flex justify-between items-center bg-white/90 p-4 rounded-xl shadow border border-[#FFD59F]"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <span className="font-semibold text-xl">Total:</span>
+              <span className="text-pink-600 text-xl font-bold">
+                ₹{getTotal()}
+              </span>
+            </motion.div>
 
-          <div className="text-right mt-4">
-            <button className="bg-pink-600 text-white px-6 py-2 rounded-xl hover:bg-pink-700">
-              Proceed to Payment
-            </button>
-          </div>
-        </div>
-      )}
+            {/* Payment CTA */}
+            <motion.div
+              className="text-right"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <button className="bg-gradient-to-r from-pink-500 to-[#ff9472] text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition hover:scale-105">
+                Proceed to Payment 💸
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+
+      <Footer
+        navigate={navigate}
+        handleProtectedAction={() => {}}
+        quote="“You don't need more things, you need the right things.” 🧘‍♂️"
+      />
     </section>
   );
 };

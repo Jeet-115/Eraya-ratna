@@ -68,13 +68,13 @@ const Navbar = () => {
       variants={headerVariants}
       initial="hidden"
       animate="visible"
-      className="w-full bg-gradient-to-r from-[#FFD59F] to-[#FFB39F] text-[#4B2E2E] shadow-md z-50 px-4 py-3"
+      className="w-full bg-gradient-to-br from-[#FFD59F] to-[#FFB39F] text-[#5D3A00] shadow-lg z-50 px-4 py-4 backdrop-blur-xl"
     >
       <div className="flex justify-between items-center">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
-          className="cursor-pointer w-28 h-auto"
+          className="cursor-pointer w-32 h-auto transition-transform hover:scale-105"
         >
           <img
             src="./Logo.png"
@@ -85,20 +85,20 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium">
+        <div className="hidden md:flex items-center gap-6 text-[15px] font-medium tracking-wide">
           {user ? (
             <>
               {/* User Dropdown */}
               <div className="relative group">
-                <span className="font-semibold cursor-pointer hover:underline">
+                <span className="font-semibold cursor-pointer hover:text-[#8A2C02] hover:drop-shadow-[0_0_4px_#FFD59F]">
                   {user.name}
                 </span>
 
-                {/* Dropdown on hover */}
-                <div className="absolute top-full right-0 mt-2 w-48 backdrop-blur-2xl rounded-lg shadow-lg border opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
+                {/* Dropdown - hidden by default, shows on hover */}
+                <div className="absolute top-full right-0 mt-2 w-52 bg-white/70 text-[#4B2E2E] backdrop-blur-xl border border-[#FFD59F] rounded-xl shadow-xl transition-all duration-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50 overflow-hidden">
                   <button
                     onClick={toggleLanguage}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-[#FFEFE8] transition duration-200"
                   >
                     {language === "en"
                       ? "Switch to हिंदी"
@@ -107,21 +107,21 @@ const Navbar = () => {
 
                   <div
                     onClick={() => navigate("/orders")}
-                    className="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2 text-sm hover:bg-[#FFEFE8] transition duration-200 cursor-pointer"
                   >
                     {t("Order History")}
                   </div>
 
                   <div
                     onClick={() => navigate("/profile")}
-                    className="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2 text-sm hover:bg-[#FFEFE8] transition duration-200 cursor-pointer"
                   >
                     {t("Profile")}
                   </div>
 
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#FFEFE8] transition duration-200"
                   >
                     {t("Logout")}
                   </button>
@@ -129,7 +129,7 @@ const Navbar = () => {
               </div>
 
               {/* Address Section */}
-              <div className="flex items-center gap-1 cursor-pointer hover:text-[#B05050]">
+              <div className="flex items-center gap-1 cursor-pointer hover:text-[#8A2C02] transition">
                 <MdOutlineLocationOn className="text-xl" />
                 <div onClick={() => navigate("/address")}>
                   <p className="text-xs text-gray-500">{t("Deliver to")}</p>
@@ -144,7 +144,7 @@ const Navbar = () => {
               >
                 <FaShoppingCart className="text-xl" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#FF7F7F] text-white text-xs px-1.5 rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-[#FF6F61] shadow-sm text-white text-xs px-1.5 rounded-full">
                     {cartCount}
                   </span>
                 )}
@@ -168,15 +168,15 @@ const Navbar = () => {
           >
             <motion.div
               animate={{ rotate: isMenuOpen ? 45 : 0, y: isMenuOpen ? 6 : 0 }}
-              className="w-8 h-[3px] bg-[#4B2E2E] rounded-md"
+              className="w-8 h-[3px] bg-[#5D3A00] rounded-md"
             />
             <motion.div
               animate={{ opacity: isMenuOpen ? 0 : 1 }}
-              className="w-8 h-[3px] bg-[#4B2E2E] rounded-md my-[5px]"
+              className="w-8 h-[3px] bg-[#5D3A00] rounded-md my-[5px]"
             />
             <motion.div
               animate={{ rotate: isMenuOpen ? -45 : 0, y: isMenuOpen ? -6 : 0 }}
-              className="w-8 h-[3px] bg-[#4B2E2E] rounded-md"
+              className="w-8 h-[3px] bg-[#5D3A00] rounded-md"
             />
           </button>
         </div>
@@ -190,7 +190,7 @@ const Navbar = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="md:hidden w-full rounded-b-lg text-start px-6 py-5 space-y-4 z-50"
+            className="md:hidden w-full bg-white/60 backdrop-blur-lg text-[#4B2E2E] rounded-b-2xl text-start mt-4 px-6 py-6 space-y-4 shadow-md transition-all duration-300 z-50"
           >
             {user ? (
               <>
@@ -246,7 +246,7 @@ const Navbar = () => {
                   <FaShoppingCart className="text-lg" />
                   <span>{t("Cart")}</span>
                   {cartCount > 0 && (
-                    <span className="absolute left-2 -top-2 bg-[#FF7F7F] text-white text-xs px-1.5 rounded-full">
+                    <span className="absolute left-2 -top-2 bg-[#FF6F61] shadow-sm text-white text-xs px-1.5 rounded-full">
                       {cartCount}
                     </span>
                   )}
@@ -255,7 +255,7 @@ const Navbar = () => {
                 {/* Language Switcher */}
                 <button
                   onClick={toggleLanguage}
-                  className="w-fit text-sm border px-3 py-1 rounded hover:bg-gray-100 transition"
+                  className="w-fit text-sm border px-3 py-1 rounded hover:bg-[#FFEFE8] duration-200 transition"
                 >
                   {language === "en" ? "Switch to हिंदी" : "Switch to English"}
                 </button>
@@ -267,7 +267,7 @@ const Navbar = () => {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="text-sm text-red-600 hover:underline mt-2"
+                    className="text-sm text-[#B03030] hover:text-[#8A2C02] hover:drop-shadow-[0_0_4px_#FFD59F] font-medium transition"
                   >
                     {t("Logout")}
                   </button>
@@ -279,7 +279,7 @@ const Navbar = () => {
                   navigate("/login");
                   setIsMenuOpen(false);
                 }}
-                className="text-sm cursor-pointer hover:text-[#B05050]"
+                className="text-sm cursor-pointer hover:text-[#8A2C02] font-medium transition"
               >
                 {t("Login")}
               </div>
