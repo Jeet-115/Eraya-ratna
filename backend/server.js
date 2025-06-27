@@ -31,14 +31,17 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
+        // Allow no-origin (like health checks) and known origins
         callback(null, true);
       } else {
+        console.warn("❌ CORS blocked for origin:", origin); // optional log
         callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
