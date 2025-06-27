@@ -133,27 +133,40 @@ const Products = () => {
           >
             🛍️ Our Divine Collection
           </motion.h2>
-          {/* Dropdown for Mobile */}
           <motion.div
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="md:hidden w-full mb-6"
           >
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Category
+            <label className="block text-sm font-semibold text-indigo-700 mb-2 tracking-wide">
+              🌼 Select a Category to Work With
             </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full p-2 rounded-md bg-white shadow border border-gray-300"
-            >
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+
+            <div className="relative rounded-lg shadow-md bg-gradient-to-br from-white to-indigo-50 p-[2px]">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full appearance-none px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-inner border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+              >
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Custom dropdown arrow */}
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-indigo-600"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.198l3.71-3.97a.75.75 0 111.1 1.02l-4.25 4.54a.75.75 0 01-1.1 0l-4.25-4.54a.75.75 0 01.02-1.06z" />
+                </svg>
+              </div>
+            </div>
           </motion.div>
 
           {/* Products Grid */}
