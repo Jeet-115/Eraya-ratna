@@ -14,6 +14,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import newsletterRoutes from "./routes/newsletterRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -55,6 +56,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/cart", cartRoutes);
+app.use('/api/file', newsletterRoutes);
 
 app.get("/health", (req, res) => {
   console.log("🩺 Health check at:", new Date().toLocaleString());

@@ -18,6 +18,7 @@ const AdminLayout = () => {
     { name: 'Products', path: '/admin/products', icon: <FaBoxOpen /> },
     { name: 'Top Products', path: '/admin/top-products', icon: <FaStar /> },
     { name: 'Events', path: '/admin/events', icon: <FaCalendarAlt /> },
+    { name: 'Newsletter', path: '/admin/newsletter', icon: <FaBoxOpen /> },
   ];
 
   const handleLogout = async () => {

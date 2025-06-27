@@ -15,3 +15,17 @@ export const fetchTopProducts = async () => {
   const res = await axiosInstance.get('/api/admin/stats/top-products');
   return res.data;
 };
+
+export const sendNewsletter = async ({ subject, message }) => {
+  const res = await axiosInstance.post('/api/admin/newsletter', { subject, message });
+  return res.data;
+}; 
+
+export const uploadNewsletterImage = async (formData) => {
+  const res = await axiosInstance.post("/api/file/upload-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+};

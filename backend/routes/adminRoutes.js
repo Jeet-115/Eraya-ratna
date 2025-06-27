@@ -34,6 +34,7 @@ import {
   bulkSoftDeleteProducts,
   updateFeaturedProducts
 } from '../controllers/productController.js';
+import { sendNewsletter } from "../controllers/newsletterController.js";
 import { protect } from '../middlewares/authMiddleware.js';
 import { adminOnly } from '../middlewares/adminMiddleware.js';
 
@@ -70,5 +71,7 @@ router.put('/products/:id', upload.array('images', 5), updateProduct);
 router.delete('/products/:id', deleteProduct);
 router.put('/products/bulk-delete', bulkSoftDeleteProducts);
 router.put('/products/featured/update', updateFeaturedProducts);
+
+router.post('/newsletter', sendNewsletter);
 
 export default router;

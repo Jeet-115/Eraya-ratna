@@ -25,6 +25,7 @@ import AdminHomepageProducts from "./pages/admin/HomepageProducts.jsx";
 import AdminEvents from "./pages/admin/AdminEvents";
 import ProtectedRoute from "./protection/ProtectedRoute";
 import AdminRoute from "./protection/AdminRoute";
+import AdminNewsletter from "./pages/admin/AdminNewsletter.jsx";
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -117,6 +118,7 @@ const AppContent = () => {
           element={<AdminHomepageProducts />}
         />
         <Route path="/admin/events" element={<AdminEvents />} />
+        <Route path="/admin/newsletter" element={<AdminNewsletter />} />
       </Route>
     </Routes>
   );
