@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 
-const sendEmail = async ({ to, subject, text }) => {
+const sendEmail = async ({ to, subject, text, html }) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail", // or any SMTP provider
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -13,7 +13,8 @@ const sendEmail = async ({ to, subject, text }) => {
     from: `"ERAYA RATNA" <${process.env.EMAIL_USER}>`,
     to,
     subject,
-    text,
+    text: text || "",               // fallback plain text
+    html: html || undefined,       // spiritual HTML support added ✅
   };
 
   await transporter.sendMail(mailOptions);
