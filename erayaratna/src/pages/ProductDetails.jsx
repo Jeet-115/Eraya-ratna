@@ -8,6 +8,9 @@ import { FaArrowLeft } from "react-icons/fa";
 import Footer from "../component/Footer";
 import { motion } from "framer-motion";
 import LoginPromptModal from "../component/LoginPromptModal";
+import { useDispatch } from "react-redux";
+import { incrementCartCount } from "../redux/cartSlice";
+
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -16,6 +19,7 @@ const ProductDetails = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const user = useSelector((state) => state.auth.user);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -43,6 +47,7 @@ const ProductDetails = () => {
       try {
         await addToCart(productId);
         toast.success("Product added to cart!");
+        dispatch(incrementCartCount(1));
       } catch (error) {
         toast.error("Failed to add to cart");
       }

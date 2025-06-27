@@ -9,6 +9,9 @@ import Footer from "../component/Footer";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import LoginPromptModal from "../component/LoginPromptModal";
+import { useDispatch } from "react-redux";
+import { incrementCartCount } from "../redux/cartSlice";
+
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
@@ -17,6 +20,7 @@ const Products = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const dispatch = useDispatch();
 
   const handleProtectedAction = (action) => {
     if (!user) {
@@ -32,6 +36,7 @@ const Products = () => {
       try {
         await addToCart(productId);
         toast.success("Added to cart!");
+        dispatch(incrementCartCount(1));
       } catch (err) {
         toast.error("Failed to add to cart.");
       }

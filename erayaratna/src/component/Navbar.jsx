@@ -4,37 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 import { FaShoppingCart } from "react-icons/fa";
 import { MdOutlineLocationOn } from "react-icons/md";
-import { FaChevronDown } from "react-icons/fa6";
 import { logoutUser } from "../services/authService";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCart } from "../services/cartService";
+import { fetchCartCount } from "../redux/cartSlice";
 
 const Navbar = () => {
-  const [cartCount, setCartCount] = useState(0);
   const [language, setLanguage] = useState("en");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const cartCount = useSelector((state) => state.cart.count);
 
   useEffect(() => {
-    const fetchCartCount = async () => {
-      try {
-        const res = await getCart();
-        setCartCount(
-          res.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
-        );
-      } catch (error) {
-        console.error("Failed to load cart count:", error);
-      }
-    };
     if (user) {
-      // only if user logged in
-      fetchCartCount();
+      dispatch(fetchCartCount());
     }
-  }, [user]);
+  }, [dispatch, user]);
 
   const toggleLanguage = () => {
     const newLang = language === "en" ? "hi" : "en";

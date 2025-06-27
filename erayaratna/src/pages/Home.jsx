@@ -12,6 +12,9 @@ import Footer from "../component/Footer";
 import { getFeaturedProducts } from "../services/productService";
 import { getEventsForHome } from "../services/eventService";
 import { addToCart } from "../services/cartService";
+import { useDispatch } from "react-redux";
+import { incrementCartCount } from "../redux/cartSlice";
+
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -19,6 +22,7 @@ const Home = () => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -55,6 +59,7 @@ const Home = () => {
       try {
         await addToCart(productId);
         toast.success("Added to cart!");
+        dispatch(incrementCartCount(1));
       } catch (err) {
         console.error("Add to Cart Error:", err);
         toast.error("Failed to add to cart.");
