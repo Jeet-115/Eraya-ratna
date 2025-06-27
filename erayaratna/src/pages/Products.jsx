@@ -7,21 +7,35 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import Footer from "../component/Footer";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import LoginPromptModal from "../component/LoginPromptModal";
 
 const Products = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  const handleAddToCart = async (productId) => {
-    try {
-      await addToCart(productId);
-      toast.success("Added to cart!");
-    } catch (err) {
-      console.error("Add to Cart Error:", err);
-      toast.error("Failed to add to cart.");
+  const handleProtectedAction = (action) => {
+    if (!user) {
+      setShowLoginPrompt(true);
+    } else {
+      action();
     }
+  };
+
+  // handleAddToCart
+  const handleAddToCart = (productId) => {
+    handleProtectedAction(async () => {
+      try {
+        await addToCart(productId);
+        toast.success("Added to cart!");
+      } catch (err) {
+        toast.error("Failed to add to cart.");
+      }
+    });
   };
 
   useEffect(() => {
@@ -69,6 +83,7 @@ const Products = () => {
     <section className="min-h-screen bg-gradient-to-br from-[#FFF6F0] to-[#F1EDF8] text-[#4B2E2E] outfit">
       <div className="max-w-7xl mx-auto flex px-4 py-10 gap-6">
         {/* Sidebar */}
+        {/* Sidebar for Desktop */}
         <motion.aside
           className="w-1/4 hidden md:block"
           initial={{ x: -40, opacity: 0 }}
@@ -104,7 +119,9 @@ const Products = () => {
             transition={{ delay: 0.1 }}
           >
             <FaArrowLeft className="text-lg" />
-            <span className="text-sm font-medium tracking-wide">Back to Home</span>
+            <span className="text-sm font-medium tracking-wide">
+              Back to Home
+            </span>
           </motion.div>
 
           {/* Heading */}
@@ -116,6 +133,28 @@ const Products = () => {
           >
             🛍️ Our Divine Collection
           </motion.h2>
+          {/* Dropdown for Mobile */}
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="md:hidden w-full mb-6"
+          >
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Category
+            </label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full p-2 rounded-md bg-white shadow border border-gray-300"
+            >
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </motion.div>
 
           {/* Products Grid */}
           <motion.div
@@ -127,7 +166,8 @@ const Products = () => {
             {products.map((product) => (
               <motion.div
                 key={product._id}
-                className="bg-white/90 p-4 rounded-2xl shadow-md backdrop-blur-lg hover:shadow-xl transition"
+                onClick={() => navigate(`/product/${product._id}`)}
+                className="bg-white/90 p-4 rounded-2xl shadow-md backdrop-blur-lg hover:shadow-xl transition cursor-pointer"
                 variants={cardVariants}
                 whileHover={{ scale: 1.03 }}
               >
@@ -138,14 +178,27 @@ const Products = () => {
                 />
                 <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
                 <p className="text-pink-600 font-bold mb-3">₹{product.price}</p>
+
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleAddToCart(product._id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent card click
+                      handleAddToCart(product._id);
+                    }}
                     className="flex-1 bg-gray-200 text-gray-800 py-1 rounded hover:bg-gray-300 transition"
                   >
                     Add to Cart
                   </button>
-                  <button className="flex-1 bg-pink-600 text-white py-1 rounded hover:bg-pink-700 transition">
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent card click
+                      handleProtectedAction(() =>
+                        navigate("/payment", { state: { product } })
+                      );
+                    }}
+                    className="flex-1 bg-pink-600 text-white py-1 rounded hover:bg-pink-700 transition"
+                  >
                     Buy Now
                   </button>
                 </div>
@@ -154,6 +207,9 @@ const Products = () => {
           </motion.div>
         </main>
       </div>
+      {showLoginPrompt && (
+        <LoginPromptModal onClose={() => setShowLoginPrompt(false)} />
+      )}
 
       {/* Footer */}
       <Footer

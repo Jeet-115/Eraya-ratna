@@ -28,7 +28,7 @@ const Footer = ({ navigate, handleProtectedAction, quote }) => {
       >
         {[
           { label: "Home", onClick: () => navigate("/") },
-          { label: "Products", onClick: () => handleProtectedAction(() => navigate("/products")) },
+          { label: "Products", onClick: () => navigate("/products") },
           { label: "Events", onClick: () => navigate("/events") },
         ].map((btn, idx) => (
           <motion.button

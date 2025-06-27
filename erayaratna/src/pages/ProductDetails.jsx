@@ -7,6 +7,7 @@ import { getProductById, getAllProducts } from "../services/productService";
 import { FaArrowLeft } from "react-icons/fa";
 import Footer from "../component/Footer";
 import { motion } from "framer-motion";
+import LoginPromptModal from "../component/LoginPromptModal";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const user = useSelector((state) => state.auth.user);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -36,17 +38,15 @@ const ProductDetails = () => {
     fetchProductDetails();
   }, [id]);
 
-  const handleAddToCart = async (productId) => {
-    if (!user) {
-      toast.error("Please login to add to cart");
-      return;
-    }
-    try {
-      await addToCart(productId);
-      toast.success("Product added to cart!");
-    } catch (error) {
-      toast.error("Failed to add to cart");
-    }
+  const handleAddToCart = (productId) => {
+    handleProtectedAction(async () => {
+      try {
+        await addToCart(productId);
+        toast.success("Product added to cart!");
+      } catch (error) {
+        toast.error("Failed to add to cart");
+      }
+    });
   };
 
   if (!product)
@@ -231,6 +231,9 @@ const ProductDetails = () => {
           </motion.p>
         )}
       </motion.div>
+      {showLoginPrompt && (
+        <LoginPromptModal onClose={() => setShowLoginPrompt(false)} />
+      )}
 
       <Footer
         navigate={navigate}

@@ -46,7 +46,7 @@ const Home = () => {
   };
 
   const handleCardClick = (productId) => {
-    handleProtectedAction(() => navigate(`/product/${productId}`));
+    navigate(`/product/${productId}`);
   };
 
   const handleAddToCart = async (e, productId) => {
