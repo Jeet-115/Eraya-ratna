@@ -15,7 +15,7 @@ export const sendNewsletter = async (req, res) => {
       sendEmail({
         to: user.email,
         subject,
-        text: message,
+        html: message,
       })
     );
 
