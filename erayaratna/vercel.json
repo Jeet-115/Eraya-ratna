@@ -1,0 +1,29 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/" },
+    { "source": "/login", "destination": "/" },
+    { "source": "/register", "destination": "/" },
+    { "source": "/products", "destination": "/" },
+    { "source": "/product/:id", "destination": "/" },
+    { "source": "/events", "destination": "/" },
+    { "source": "/orders", "destination": "/" },
+    { "source": "/cart", "destination": "/" },
+    { "source": "/address", "destination": "/" },
+    { "source": "/profile", "destination": "/" },
+    { "source": "/payment", "destination": "/" },
+    { "source": "/thank-you", "destination": "/" },
+
+    { "source": "/admin", "destination": "/" },
+    { "source": "/admin/admindashboard", "destination": "/" },
+    { "source": "/admin/users", "destination": "/" },
+    { "source": "/admin/categories", "destination": "/" },
+    { "source": "/admin/products", "destination": "/" },
+    { "source": "/admin/top-products", "destination": "/" },
+    { "source": "/admin/events", "destination": "/" },
+    { "source": "/admin/orders", "destination": "/" },
+    { "source": "/admin/newsletter", "destination": "/" },
+
+    { "source": "/product/*", "destination": "/" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}

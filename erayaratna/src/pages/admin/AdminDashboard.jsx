@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   fetchDashboardSummary,
   fetchRevenueStats,
   fetchTopProducts,
-} from '../../services/adminService';
+} from "../../services/adminService";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -36,7 +36,7 @@ const AdminDashboard = () => {
         setTopProducts(topProductsData);
         setLoading(false);
       } catch (err) {
-        console.error('Failed to load admin dashboard:', err);
+        console.error("Failed to load admin dashboard:", err);
       }
     };
 
@@ -93,19 +93,27 @@ const AdminDashboard = () => {
           Revenue Overview 💰
         </h2>
         <p className="text-gray-700 mb-1">
-          <strong>Total Revenue:</strong> ₹{revenue?.totalRevenue.toFixed(2)}
+          <strong>Total Revenue:</strong> ₹
+          {revenue?.totalRevenue != null
+            ? Number(revenue.totalRevenue).toFixed(2)
+            : "0.00"}
         </p>
         <p className="text-gray-700 mb-3">
-          <strong>Avg Order Value:</strong> ₹{revenue?.avgOrderValue.toFixed(2)}
+          <strong>Avg Order Value:</strong> ₹
+          {revenue?.avgOrderValue != null
+            ? Number(revenue.avgOrderValue).toFixed(2)
+            : "0.00"}
         </p>
         <div>
           <h3 className="font-semibold text-gray-700 mb-2">Monthly Stats:</h3>
           <ul className="list-disc list-inside space-y-1 text-gray-600">
-            {Object.entries(revenue?.revenueByMonth || {}).map(([month, value]) => (
-              <li key={month}>
-                {month}: ₹{value.toFixed(2)}
-              </li>
-            ))}
+            {Object.entries(revenue?.revenueByMonth || {}).map(
+              ([month, value]) => (
+                <li key={month}>
+                  {month}: ₹{value != null ? Number(value).toFixed(2) : "0.00"}
+                </li>
+              )
+            )}
           </ul>
         </div>
       </motion.div>
@@ -133,7 +141,11 @@ const AdminDashboard = () => {
             >
               {product.image && (
                 <img
-                  src={product.image}
+                  src={
+                    product.image
+                      ? product.image
+                      : "https://via.placeholder.com/60x60?text=No+Image"
+                  }
                   alt={product.name}
                   className="w-14 h-14 object-cover rounded-md border border-pink-200"
                 />

@@ -14,7 +14,7 @@ import OrderHistory from "./pages/OrderHistory";
 import Cart from "./pages/Cart";
 import Address from "./pages/Address";
 import Profile from "./pages/Profile";
-import Payment from "./pages/Payment";
+import PaymentPage from "./pages/PaymentPage";
 import Events from "./pages/Events";
 import AdminLayout from "./layout/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
@@ -26,6 +26,8 @@ import AdminEvents from "./pages/admin/AdminEvents";
 import ProtectedRoute from "./protection/ProtectedRoute";
 import AdminRoute from "./protection/AdminRoute";
 import AdminNewsletter from "./pages/admin/AdminNewsletter.jsx";
+import ThankYou from "./pages/ThankYou";
+import AdminOrders from "./pages/admin/AdminOrders.jsx";
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -94,7 +96,15 @@ const AppContent = () => {
           path="payment"
           element={
             <ProtectedRoute>
-              <Payment />
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/thank-you"
+          element={
+            <ProtectedRoute>
+              <ThankYou />
             </ProtectedRoute>
           }
         />
@@ -113,11 +123,9 @@ const AppContent = () => {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/categories" element={<AdminCategories />} />
         <Route path="/admin/products" element={<AdminProducts />} />
-        <Route
-          path="/admin/top-products"
-          element={<AdminHomepageProducts />}
-        />
+        <Route path="/admin/top-products" element={<AdminHomepageProducts />} />
         <Route path="/admin/events" element={<AdminEvents />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/newsletter" element={<AdminNewsletter />} />
       </Route>
     </Routes>

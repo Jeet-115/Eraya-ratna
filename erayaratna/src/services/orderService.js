@@ -1,13 +1,16 @@
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from "../utils/axiosInstance";
 
-// Get orders for logged-in user
-export const getMyOrders = async () => {
-  const res = await axiosInstance.get('/api/orders/my');
+export const createOrder = async (orderData) => {
+  const res = await axiosInstance.post("/api/orders", orderData);
   return res.data;
 };
 
-// (Optional: For single order detail if needed)
-export const getOrderById = async (id) => {
-  const res = await axiosInstance.get(`/api/orders/${id}`);
+export const getMyOrders = async () => {
+  const res = await axiosInstance.get("/api/orders/my-orders");
+  return res.data;
+};
+
+export const cancelOrder = async (orderId) => {
+  const res = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
   return res.data;
 };

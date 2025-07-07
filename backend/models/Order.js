@@ -1,50 +1,44 @@
-import mongoose from 'mongoose';
-
-const orderItemSchema = new mongoose.Schema(
-  {
-    product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      required: true,
-    },
-    quantity: { type: Number, required: true },
-    price: { type: Number, required: true },
-  },
-  { _id: false }
-);
-
-const shippingInfoSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    address: { type: String, required: true },
-    city: { type: String, required: true },
-    country: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    phone: { type: String, required: true },
-  },
-  { _id: false }
-);
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    items: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        qty: { type: Number, required: true },
+      },
+    ],
+    address: {
+      type: mongoose.Schema.Types.ObjectId, // just an ID reference to embedded user address
       required: true,
     },
-    orderItems: [orderItemSchema],
-    shippingInfo: shippingInfoSchema,
-    paymentInfo: {
-      id: String, // Razorpay payment ID
-      status: String,
+
+    paymentMode: { type: String, default: "Cash on Delivery" },
+    status: {
+      type: String,
+      enum: ["Pending", "Processing", "Ready", "Delivered", "Cancelled"],
+      default: "Pending",
     },
-    totalAmount: { type: Number, required: true },
-    isPaid: { type: Boolean, default: false },
-    paidAt: Date,
-    isDelivered: { type: Boolean, default: false },
-    deliveredAt: Date,
+    orderedAt: { type: Date, default: Date.now },
+    cancelledAt: Date,
+    isPaid: { type: Boolean, default: true }, // assume true for COD
+    paidAt: { type: Date, default: Date.now },
+    totalPrice: { type: Number, required: true },
+    cancelledBy: {
+      type: String,
+      enum: ["User", "Admin"],
+    },
+    cancellationReason: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('Order', orderSchema);
+export default mongoose.model("Order", orderSchema);

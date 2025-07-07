@@ -77,7 +77,18 @@ const ProductsOverview = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     handleProtectedAction(() =>
-                      console.log("Buy now logic here")
+                      navigate("/payment", {
+                        state: {
+                          type: "BUY_NOW",
+                          product: {
+                            _id: product._id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.images?.[0],
+                            qty: 1,
+                          },
+                        },
+                      })
                     );
                   }}
                   className="text-[#8A2C02] text-xs font-medium hover:underline transition"

@@ -11,7 +11,6 @@ import LoginPromptModal from "../component/LoginPromptModal";
 import { useDispatch } from "react-redux";
 import { incrementCartCount } from "../redux/cartSlice";
 
-
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -164,7 +163,25 @@ const ProductDetails = () => {
             >
               Add to Cart
             </button>
-            <button className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition">
+            <button
+              onClick={() =>
+                handleProtectedAction(() =>
+                  navigate("/payment", {
+                    state: {
+                      type: "BUY_NOW",
+                      product: {
+                        _id: product._id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.images?.[0],
+                        qty: 1,
+                      },
+                    },
+                  })
+                )
+              }
+              className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition"
+            >
               Buy Now
             </button>
           </motion.div>
@@ -216,7 +233,22 @@ const ProductDetails = () => {
                     Cart
                   </button>
                   <button
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={() =>
+                      handleProtectedAction(() =>
+                        navigate("/payment", {
+                          state: {
+                            type: "BUY_NOW",
+                            product: {
+                              _id: similar._id,
+                              name: similar.name,
+                              price: similar.price,
+                              image: similar.images?.[0],
+                              qty: 1,
+                            },
+                          },
+                        })
+                      )
+                    }
                     className="flex-1 text-sm bg-pink-600 text-white py-1 rounded hover:bg-pink-700"
                   >
                     Buy

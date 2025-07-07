@@ -29,3 +29,13 @@ export const uploadNewsletterImage = async (formData) => {
   });
   return res.data;
 };
+
+export const fetchAllOrders = async () => {
+  const res = await axiosInstance.get('/api/admin/orders');
+  return res.data;
+};
+
+export const updateOrderStatus = async (orderId, payload) => {
+  const res = await axiosInstance.put(`/api/admin/orders/${orderId}/status`, payload);
+  return res.data;
+};

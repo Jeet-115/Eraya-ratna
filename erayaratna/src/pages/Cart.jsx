@@ -14,6 +14,7 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -60,6 +61,30 @@ const Cart = () => {
       (sum, item) => sum + item.product.price * item.quantity,
       0
     );
+
+  const handleProceedToPayment = () => {
+    const selectedProducts = cartItems
+      .filter((item) => selectedItemIds.includes(item._id))
+      .map((item) => ({
+        _id: item.product._id,
+        name: item.product.name,
+        price: item.product.price,
+        image: item.product.images[0],
+        qty: item.quantity,
+      }));
+
+    if (selectedProducts.length === 0) {
+      toast.error("Select at least one item to proceed");
+      return;
+    }
+
+    navigate("/payment", {
+      state: {
+        type: "FROM_CART",
+        products: selectedProducts,
+      },
+    });
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -132,6 +157,18 @@ const Cart = () => {
                 className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-lg border border-[#FFD59F] p-4 rounded-2xl shadow"
                 variants={itemVariants}
               >
+                <input
+                  type="checkbox"
+                  checked={selectedItemIds.includes(_id)}
+                  onChange={(e) => {
+                    setSelectedItemIds((prev) =>
+                      e.target.checked
+                        ? [...prev, _id]
+                        : prev.filter((id) => id !== _id)
+                    );
+                  }}
+                  className="mr-4"
+                />
                 <img
                   src={product.images[0]}
                   alt={product.name}
@@ -190,7 +227,15 @@ const Cart = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <button className="bg-gradient-to-r from-pink-500 to-[#ff9472] text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition hover:scale-105">
+              <button
+                onClick={handleProceedToPayment}
+                disabled={selectedItemIds.length === 0}
+                className={`${
+                  selectedItemIds.length === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-gradient-to-r from-pink-500 to-[#ff9472] hover:scale-105"
+                } text-white px-6 py-3 rounded-xl font-medium shadow-lg transition`}
+              >
                 Proceed to Payment 💸
               </button>
             </motion.div>

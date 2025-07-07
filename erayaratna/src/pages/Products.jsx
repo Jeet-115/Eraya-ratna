@@ -12,7 +12,6 @@ import LoginPromptModal from "../component/LoginPromptModal";
 import { useDispatch } from "react-redux";
 import { incrementCartCount } from "../redux/cartSlice";
 
-
 const Products = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -210,9 +209,20 @@ const Products = () => {
 
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent card click
+                      e.stopPropagation();
                       handleProtectedAction(() =>
-                        navigate("/payment", { state: { product } })
+                        navigate("/payment", {
+                          state: {
+                            type: "BUY_NOW",
+                            product: {
+                              _id: product._id,
+                              name: product.name,
+                              price: product.price,
+                              image: product.images?.[0],
+                              qty: 1,
+                            },
+                          },
+                        })
                       );
                     }}
                     className="flex-1 bg-pink-600 text-white py-1 rounded hover:bg-pink-700 transition"
