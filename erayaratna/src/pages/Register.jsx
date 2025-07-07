@@ -5,6 +5,7 @@ import { registerUser } from "../services/authService";
 import { setCredentials } from "../redux/authSlice";
 import { FaArrowLeft } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const Register = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -71,7 +73,8 @@ const Register = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Join <span className="font-semibold">Eraya RATNA</span> and discover the divine within you 💫
+          Join <span className="font-semibold">Eraya RATNA</span> and discover
+          the divine within you 💫
         </motion.p>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -110,20 +113,30 @@ const Register = () => {
           </motion.div>
 
           <motion.div
-            initial={{ x: -40, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.55 }}
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.45 }}
           >
             <label className="block mb-1 text-sm font-medium">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-              placeholder="Create a password"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 pr-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-pink-600 hover:text-pink-800 transition"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
+            </div>
           </motion.div>
 
           <motion.button
@@ -144,7 +157,10 @@ const Register = () => {
           transition={{ delay: 0.7 }}
         >
           Already have an account?{" "}
-          <Link to="/login" className="text-pink-600 hover:underline font-medium">
+          <Link
+            to="/login"
+            className="text-pink-600 hover:underline font-medium"
+          >
             Login here
           </Link>
         </motion.p>
@@ -155,7 +171,8 @@ const Register = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          “As you take your first step with us, may you walk the path of light, peace, and prosperity.” 🧘‍♀️
+          “As you take your first step with us, may you walk the path of light,
+          peace, and prosperity.” 🧘‍♀️
         </motion.p>
       </motion.div>
     </section>
