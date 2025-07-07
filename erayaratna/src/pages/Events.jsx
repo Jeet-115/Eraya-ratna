@@ -54,17 +54,9 @@ const Events = () => {
     },
   };
 
-  const handleProtectedAction = (action) => {
-    if (!user) {
-      setShowLoginPrompt(true);
-    } else {
-      action();
-    }
-  };
-
   return (
     <section className="min-h-screen px-4 py-10 bg-gradient-to-br from-[#FFF6F0] to-[#EAE2F3] text-[#4B2E2E] outfit">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <motion.div
           onClick={() => navigate("/")}
@@ -78,15 +70,17 @@ const Events = () => {
           </span>
         </motion.div>
 
+        {/* Title */}
         <motion.h2
-          className="text-3xl font-bold mb-8 text-center"
+          className="text-3xl font-bold mb-10 text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          🌿 All Events
+          🌺 Divine Gatherings & Events
         </motion.h2>
 
+        {/* Content */}
         {loading ? (
           <motion.p
             className="text-center text-gray-500"
@@ -97,7 +91,7 @@ const Events = () => {
           </motion.p>
         ) : events.length === 0 ? (
           <motion.p
-            className="text-center text-gray-500"
+            className="text-center text-gray-500 italic"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -105,30 +99,41 @@ const Events = () => {
           </motion.p>
         ) : (
           <motion.div
-            className="space-y-6"
+            className="grid gap-8 sm:grid-cols-1 md:grid-cols-2"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
             {events.map((event) => {
               const status = getStatus(event.startTime, event.endTime);
+              const borderColor =
+                status === "Upcoming"
+                  ? "#3b82f6"
+                  : status === "Ongoing"
+                  ? "#10b981"
+                  : "#9ca3af";
 
               return (
                 <motion.div
                   key={event._id}
-                  className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow border-l-4"
-                  style={{
-                    borderColor:
-                      status === "Upcoming"
-                        ? "#3b82f6"
-                        : status === "Ongoing"
-                        ? "#10b981"
-                        : "#9ca3af",
-                  }}
+                  className="bg-white/90 backdrop-blur-md border-l-4 p-5 rounded-2xl shadow-lg hover:shadow-xl transition duration-300"
+                  style={{ borderColor }}
                   variants={cardVariants}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold">{event.title}</h3>
+                  {/* Event Image */}
+                  <div className="h-40 mb-4 rounded-xl overflow-hidden bg-gradient-to-tr from-[#FFEFE8] to-[#FFF6F0] shadow-inner flex items-center justify-center">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  {/* Event Info */}
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-semibold text-[#8A2C02]">
+                      {event.title}
+                    </h3>
                     <span
                       className={`text-xs px-3 py-1 rounded-full ${
                         status === "Upcoming"
@@ -142,15 +147,16 @@ const Events = () => {
                     </span>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed mb-3">
+                  <p className="text-sm text-gray-700 mb-3">
                     {event.description}
                   </p>
 
-                  <div className="text-sm text-gray-600">
-                    📍 <span className="font-medium">{event.location}</span>
-                    <br />
-                    🗓️ {new Date(event.startTime).toLocaleDateString()} –{" "}
-                    {new Date(event.endTime).toLocaleDateString()}
+                  <div className="text-sm text-[#5C3A00] space-y-1">
+                    <p>📍 {event.location}</p>
+                    <p>
+                      🗓️ {new Date(event.startTime).toLocaleDateString()} –{" "}
+                      {new Date(event.endTime).toLocaleDateString()}
+                    </p>
                   </div>
                 </motion.div>
               );
@@ -162,8 +168,8 @@ const Events = () => {
       {/* Footer Spiritual Quote */}
       <Footer
         navigate={navigate}
-        handleProtectedAction={handleProtectedAction}
-        quote="“Attend not just to events, but to the energy they bring.” ✨"
+        quote="“Sacred events are not just moments, they are portals of presence.” 🌸"
+        handleProtectedAction={() => {}}
       />
     </section>
   );

@@ -6,7 +6,12 @@ import { fetchCartCount } from "../redux/cartSlice";
 import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { FaMapMarkerAlt, FaPhone, FaGift, FaShippingFast } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaPhone,
+  FaGift,
+  FaShippingFast,
+} from "react-icons/fa";
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -77,7 +82,10 @@ const PaymentPage = () => {
       year: "numeric",
     });
 
-  const total = selectedProducts.reduce((acc, item) => acc + item.qty * item.price, 0);
+  const total = selectedProducts.reduce(
+    (acc, item) => acc + item.qty * item.price,
+    0
+  );
 
   return (
     <section className="min-h-screen px-6 py-10 bg-gradient-to-br from-[#FFF7EA] to-[#FFE0D3] outfit text-[#4B2E2E]">
@@ -87,6 +95,20 @@ const PaymentPage = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
+        {/* Add this just below */}
+        <motion.div
+          className="flex justify-end"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#FFCF9F] to-[#FFC1B6] text-[#5D3A00] font-medium rounded-full shadow hover:shadow-lg hover:scale-105 transition-all"
+          >
+            🕊️ Back to Home
+          </button>
+        </motion.div>
         <motion.h2
           className="text-4xl font-bold text-center text-[#6B2E15]"
           initial={{ y: -20, opacity: 0 }}
@@ -107,16 +129,18 @@ const PaymentPage = () => {
               transition={{ delay: 0.1 }}
             >
               <div className="flex items-center gap-4">
-                <img src={p.image} alt={p.name} className="w-20 h-20 object-cover rounded-lg" />
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-20 h-20 object-cover rounded-lg"
+                />
                 <div>
                   <p className="font-semibold">{p.name}</p>
                   <p className="text-sm text-gray-600">Qty: {p.qty}</p>
                   <p className="text-sm text-gray-600">Price: ₹{p.price}</p>
                 </div>
               </div>
-              <div className="font-bold text-pink-700">
-                ₹{p.qty * p.price}
-              </div>
+              <div className="font-bold text-pink-700">₹{p.qty * p.price}</div>
             </motion.div>
           ))}
           <p className="text-right font-bold text-lg text-pink-700">
@@ -140,18 +164,9 @@ const PaymentPage = () => {
                     }
                   </p>
                   <p className="text-sm text-gray-700">
-                    {
-                      addresses.find((a) => a._id === selectedAddressId)
-                        .street
-                    },{" "}
-                    {
-                      addresses.find((a) => a._id === selectedAddressId)
-                        .city
-                    },{" "}
-                    {
-                      addresses.find((a) => a._id === selectedAddressId)
-                        .state
-                    } -{" "}
+                    {addresses.find((a) => a._id === selectedAddressId).street},{" "}
+                    {addresses.find((a) => a._id === selectedAddressId).city},{" "}
+                    {addresses.find((a) => a._id === selectedAddressId).state} -{" "}
                     {
                       addresses.find((a) => a._id === selectedAddressId)
                         .postalCode
@@ -180,28 +195,52 @@ const PaymentPage = () => {
           )}
 
           {showAddressOptions && (
-            <div>
-              <select
-                className="w-full p-2 border rounded mb-2"
-                value={selectedAddressId}
-                onChange={(e) => {
-                  setSelectedAddressId(e.target.value);
-                  setShowAddressOptions(false);
-                }}
-              >
-                {addresses.map((addr) => (
-                  <option key={addr._id} value={addr._id}>
-                    {addr.fullName}, {addr.street}, {addr.city}, {addr.state}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={() => setShowAddressOptions(false)}
-                className="text-sm text-gray-600 hover:underline"
-              >
-                Cancel
-              </button>
-            </div>
+            <motion.div
+              className="grid gap-4 sm:grid-cols-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {addresses.map((addr) => (
+                <label
+                  key={addr._id}
+                  className={`cursor-pointer p-4 rounded-xl border-2 shadow backdrop-blur-sm bg-white/70 transition-all duration-200 ${
+                    selectedAddressId === addr._id
+                      ? "border-pink-500 bg-pink-50"
+                      : "border-gray-200 hover:border-pink-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="address"
+                    value={addr._id}
+                    checked={selectedAddressId === addr._id}
+                    onChange={() => {
+                      setSelectedAddressId(addr._id);
+                      setShowAddressOptions(false);
+                    }}
+                    className="sr-only"
+                  />
+                  <div className="text-sm text-[#4B2E2E] space-y-1">
+                    <p className="font-medium">{addr.fullName}</p>
+                    <p>
+                      {addr.street}, {addr.city}, {addr.state} -{" "}
+                      {addr.postalCode}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      📞 {addr.mobileNumber}
+                    </p>
+                  </div>
+                </label>
+              ))}
+              <div className="sm:col-span-2 flex justify-center">
+                <button
+                  onClick={() => setShowAddressOptions(false)}
+                  className="mt-2 text-sm text-blue-600 hover:underline"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
           )}
         </motion.div>
 
@@ -218,7 +257,9 @@ const PaymentPage = () => {
             </p>
           </div>
           <div className="p-4 bg-white/80 rounded-xl border border-[#FFD59F] shadow backdrop-blur">
-            <h4 className="font-semibold mb-2 text-[#6B2E15]">💰 Payment Method</h4>
+            <h4 className="font-semibold mb-2 text-[#6B2E15]">
+              💰 Payment Method
+            </h4>
             <p>Cash on Delivery</p>
           </div>
         </div>
