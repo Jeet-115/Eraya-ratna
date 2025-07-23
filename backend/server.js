@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
+import './cron/eventReminders.js';
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -15,6 +16,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import newsletterRoutes from "./routes/newsletterRoutes.js";
+import eventNotificationRoutes from './routes/eventNotificationRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -57,6 +59,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/cart", cartRoutes);
 app.use('/api/file', newsletterRoutes);
+app.use("/api/events/notifications", eventNotificationRoutes);
 
 app.get("/health", (req, res) => {
   console.log("🩺 Health check at:", new Date().toLocaleString());
